@@ -1,7 +1,10 @@
 <?php
 
+include('./classes/GenerateFormFields.php');
 include('./classes/DB.php');
 include('./classes/Login.php');
+include('./classes/Profile.php');
+include('./classes/Task.php');
 
 if (Login::isLoggedIn()) {
         $userid = Login::isLoggedIn();
@@ -117,7 +120,7 @@ if(isset($_POST['submit'])){
                             </li>
                             <div class="d-none d-sm-block topbar-divider"></div>
                             <li class="nav-item dropdown no-arrow" role="presentation">
-                                <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span class="d-none d-lg-inline mr-2 text-gray-600 small">Mthokozisi Mseleku</span><img class="border rounded-circle img-profile" src="assets/img/avatars/avatar5.jpeg"></a>
+                                <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span class="d-none d-lg-inline mr-2 text-gray-600 small"><?php Profile::getActiveUser(); ?></span><img class="border rounded-circle img-profile" src="assets/img/avatars/avatar5.jpeg"></a>
                                     <div
                                         class="dropdown-menu shadow dropdown-menu-right animated--grow-in" role="menu"><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Profile</a><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Settings</a>
                                         <div
@@ -146,20 +149,20 @@ if(isset($_POST['submit'])){
                                             </div>
                                         </div>
                                         <form class="p-4" method="post" action="index.php">
-                                            <div class="form-group"><label>Tax Compliance Item</label><select id="item" name="item" class="form-control"><optgroup label="Select the main task"><option value="SARS Corporate Tax Refund">SARS Corporate Tax Refund</option><option value="SARS Audit - ITR 14 YOA">SARS Audit - ITR 14 YOA</option><option value="SARS Audit - Provisional Tax YOA">SARS Audit - Provisional Tax YOA</option><option value="VAT/GST Return">VAT/GST Return</option><option value="VAT/GST Payment">VAT/GST Payment</option></optgroup></select></div>
+                                            <div class="form-group"><label>Tax Compliance Item</label><select id="item" name="item" class="form-control"><optgroup label="Select the main task"><?php GenerateTaxFormFields::getTaskFields(); ?></optgroup></select></div>
                                             <div
-                                                class="form-group"><label>Entity</label><select id="ent" name="ent" class="form-control"><optgroup label="Select Entity"><option value="Zensar SA PTY">Zensar SA PTY</option><option value="ZTL, SA Branch">ZTL, SA Branch</option></optgroup></select></div>
+                                                class="form-group"><label>Entity</label><select id="ent" name="ent" class="form-control"><optgroup label="Select Entity"><?php GenerateTaxFormFields::getEntityFields(); ?></optgroup></select></div>
                                             <div
-                                                class="form-group"><label>OU</label><select id="ou" name="ou" class="form-control"><optgroup label="Select OU"><option value="511">511</option><option value="513">513</option></optgroup></select></div>
+                                                class="form-group"><label>OU</label><select id="ou" name="ou" class="form-control"><optgroup label="Select OU"><?php GenerateTaxFormFields::getOUFields(); ?></optgroup></select></div>
                                             
-                                    <div class="form-group"><label>Fiscal Year</label><select id="fy" name="fy" class="form-control"><optgroup label="Select Fiscal Year"><option value="2017-18">2017-18</option><option value="2018-19">2018-19</option><option value="2019-20">2019-20</option><option value="2020-21">2020-21</option><option value="2021-22">2021-22</option></optgroup></select></div>
+                                    <div class="form-group"><label>Fiscal Year</label><select id="fy" name="fy" class="form-control"><optgroup label="Select Fiscal Year"><?php GenerateTaxFormFields::getFYFields(); ?></optgroup></select></div>
                                     <div
-                                        class="form-group"><label>Periodicity</label><select id="period" name="period" class="form-control"><optgroup label="Select Periodicity"><option value="Monthly">Monthly</option><option value="Yearly">Yearly</option><option value="On Notice">On Notice</option></optgroup></select></div>
+                                        class="form-group"><label>Periodicity</label><select id="period" name="period" class="form-control"><optgroup label="Select Periodicity"><?php GenerateTaxFormFields::getPeriodFields(); ?></optgroup></select></div>
                                 <div
-                                    class="form-group"><label>Due For</label><select id="dueFor" name="dueFor" class="form-control"><optgroup label="Due For"><option value="April-March">April - March</option><option value="March">March</option><option value="April">April</option><option value="May">May</option></optgroup></select></div>
+                                    class="form-group"><label>Due For</label><select id="dueFor" name="dueFor" class="form-control"><optgroup label="Due For"><?php GenerateTaxFormFields::getDueForFields(); ?></optgroup></select></div>
                             <div
-                                class="form-group"><label>Due In Month</label><select id="dueIn" name="dueIn" class="form-control"><optgroup label="Due In Month"><option value="April">April</option><option value="May">May</option><option value="June">June</option><option value="July">July</option></optgroup></select></div>
-                        <div
+                                class="form-group"><label>Due In Month</label><select id="dueIn" name="dueIn" class="form-control"><optgroup label="Due In Month"><?php GenerateTaxFormFields::getDueInFields(); ?></optgroup></select></div>
+                        <!--<div
                             class="form-group"><label>Complied On</label>
                             <div class="wrapper">
                                 <div class="form-group">
@@ -170,7 +173,7 @@ if(isset($_POST['submit'])){
                                     </div>
                                 </div>
                             </div>
-                    </div>
+                    </div>-->
                     <div class="form-group"><button name="submit" id="submit" class="btn btn-dark btn-block" type="submit">Submit Comlpiance Item</button></div>
                     </form>
                 </div>
@@ -187,31 +190,48 @@ if(isset($_POST['submit'])){
         <div class="row">
             <div class="col-lg-8">
                 <div style="margin:46px;">
-                    <h1 style="font-size: 26px;">Tasks To Do</h1><div class="row row-striped">
+                    <h1 style="font-size: 26px;">Tasks To Do</h1>
+                    <div class="row row-striped">
 			<div class="col-2 text-center ">
-				<h1 class="display-4 "><span class="badge date-green">20</span></h1>
-				<h2>Mar</h2>
+				<h1 class="display-4 "><span class="badge date-green"></span></h1>
+				<h2>Mon</h2>
 			</div>
 			<div class="col-10">
-				<h3 class="text-uppercase"><strong>VAT/GST Payment</strong></h3>
-				
-				<p>VAT/GST Payment subtask 1</p>
-				<p>VAT/GST Payment subtask 2</p>
-				<p>VAT/GST Payment subtask 3</p>
+				<h3 class="text-uppercase"><strong> Monthly Tasks</strong></h3>
+				<?php Task::getMonTasks(); ?>
+			</div>
+		</div>
+                    <div class="row row-striped">
+			<div class="col-2 text-center ">
+				<h1 class="display-4 "><span class="badge date-green"></span></h1>
+				<h2>May</h2>
+			</div>
+			<div class="col-10">
+				<h3 class="text-uppercase"><strong>Tasks Due In May</strong></h3>
+				<?php Task::getMayTasks(); ?>
 			</div>
 		</div><div class="row row-striped">
 			<div class="col-2 text-center">
-				<h1 class="display-4"><span class="badge date-green">20</span></h1>
-				<h2>APR</h2>
+				<h1 class="display-4"><span class="badge date-green"></span></h1>
+				<h2>Jun</h2>
 			</div>
 			<div class="col-10">
-				<h3 class="text-uppercase"><strong>VAT/GST Return</strong></h3>
+				<h3 class="text-uppercase"><strong>Tasks Due In June</strong></h3>
 				
-				<p>VAT/GST Return subtask 1</p>
-				<p>VAT/GST Return subtask 2</p>
-				<p>VAT/GST Return subtask 3</p>
+				<?php Task::getJunTasks(); ?>
 			</div>
-		</div></div>
+		</div>
+                    <div class="row row-striped">
+			<div class="col-2 text-center ">
+				<h1 class="display-4 "><span class="badge date-green"></span></h1>
+				<h2>Jul</h2>
+			</div>
+			<div class="col-10">
+				<h3 class="text-uppercase"><strong>Tasks Due In July</strong></h3>
+				<?php Task::getJulTasks(); ?>
+			</div>
+		</div>
+                </div>
             </div>
             <div class="col-lg-4">
                 <section><br><br>

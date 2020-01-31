@@ -1,8 +1,5 @@
 <?php
 
-include('./classes/DB.php');
-include('./classes/Login.php');
-
 class GenerateReport{
     
     public static function getTaxReportData(){
@@ -14,6 +11,8 @@ class GenerateReport{
         
         foreach($compliedItems as $comp) {
             
+            $class = "alert-success";
+            
             echo "<tr>
                 <td>".$comp['sNo']."</td>
                 <td>".$comp['country']."</td>
@@ -24,7 +23,7 @@ class GenerateReport{
                 <td>".$comp['period']."</td>
 	            <td>".$comp['dueFor']."</td>
 	            <td>".$comp['dueIn']."</td>
-                <td class='alert alert-warning'>".$comp['compliedOn']."</td>
+                <td class='alert ".$class."'>".$comp['compliedOn']."</td>
                 </tr>";
         }
     

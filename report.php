@@ -1,6 +1,15 @@
 <?php
 
 include('./classes/GenerateReport.php');
+include('./classes/Profile.php');
+include('./classes/DB.php');
+include('./classes/Login.php');
+
+if (Login::isLoggedIn()) {
+        $userid = Login::isLoggedIn();
+} else {
+        header('Location: login.php');
+}
 
 ?>
 
@@ -19,6 +28,7 @@ include('./classes/GenerateReport.php');
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
+    <script src="Print.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> 
      <!-- Data tables CSS -->
      <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"/>
@@ -49,11 +59,6 @@ include('./classes/GenerateReport.php');
             <div id="content" style="background-image: url(&quot;none&quot;);background-repeat: no-repeat;background-size: cover;background-position: center;">
                 <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
                     <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle mr-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button>
-                        <form class="form-inline d-none d-sm-inline-block mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                            <div class="input-group"><input class="bg-light form-control border-0 small" type="text" placeholder="Search for ...">
-                                <div class="input-group-append"><button class="btn btn-primary py-0" type="button"><i class="fas fa-search"></i></button></div>
-                            </div>
-                        </form>
                         <ul class="nav navbar-nav flex-nowrap ml-auto">
                             <li class="nav-item dropdown d-sm-none no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><i class="fas fa-search"></i></a>
                                 <div class="dropdown-menu dropdown-menu-right p-3 animated--grow-in" role="menu" aria-labelledby="searchDropdown">
@@ -91,7 +96,7 @@ include('./classes/GenerateReport.php');
                             </li>
                             <div class="d-none d-sm-block topbar-divider"></div>
                             <li class="nav-item dropdown no-arrow" role="presentation">
-                                <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span class="d-none d-lg-inline mr-2 text-gray-600 small">Mthokozisi Mseleku</span><img class="border rounded-circle img-profile" src="assets/img/avatars/avatar5.jpeg"></a>
+                                <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span class="d-none d-lg-inline mr-2 text-gray-600 small"><?php Profile::getActiveUser();?></span><img class="border rounded-circle img-profile" src="assets/img/avatars/avatar5.jpeg"></a>
                                     <div
                                         class="dropdown-menu shadow dropdown-menu-right animated--grow-in" role="menu"><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Profile</a><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Settings</a>
                                         <div
@@ -107,12 +112,12 @@ include('./classes/GenerateReport.php');
                     <h3 class="text-dark mb-1">Report</h3>
                 </div>
                 <div class="col-lg-1">
-                    <div><button class="btn btn-dark" type="button">Print</button></div>
+                    <div><button onclick="printRep()" class="btn btn-dark" type="button">Print</button></div>
                 </div>
                 <div class="col-lg-3"><button class="btn btn-primary" type="button" style="background-color: #eb192e;">Email</button></div>
             </div>
         </div>
-        <div class="container my-4 mx-4">	
+        <div class="container my-4 mx-4" id="print">	
       <table id="dtBasicExample" class="table table-striped table-bordered" cellspacing="0" width="100%">
 		  <thead>
 			 <tr>
@@ -198,6 +203,8 @@ include('./classes/GenerateReport.php');
 
   <!-- Date picker  JS -->
   <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+
+  <script src="classes/PrintRep.js" type="text/javascript"></script>
   
   <script type="text/javascript">
 		$(document).ready(function() {
