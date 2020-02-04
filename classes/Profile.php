@@ -11,6 +11,12 @@ class Profile{
         echo $name.' '.$surname;
     }
     
+    public static function getProfilePic(){
+        $profilePic = DB::query('SELECT profilePic FROM users WHERE empID = :empID', array(':empID'=>Login::isLoggedIn()))[0]['profilePic'];
+        
+        echo $profilePic;
+    }
+    
 }
 
 

@@ -5,6 +5,10 @@ include('./classes/Login.php');
 
 $errors = array();
 
+if(Login::isLoggedIn()){
+    header("Location: index.php");
+}
+
 if (isset($_POST['login'])) {
     
         $empID = $_POST['empID'];

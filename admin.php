@@ -5,6 +5,7 @@ include('./classes/DB.php');
 include('./classes/Login.php');
 include('./classes/Profile.php');
 include('./classes/Admin.php');
+include('./classes/Notifications.php');
 
 if (Login::isLoggedIn()) {
         $userid = Login::isLoggedIn();
@@ -260,7 +261,7 @@ if(isset($_POST['submitEditDueIn'])){
                 <hr class="sidebar-divider my-0">
                 <ul class="nav navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item" role="presentation"><a class="nav-link" href="index.php" style="color: rgba(0,0,0,0.8);"><i class="fas fa-tachometer-alt" style="color: #000000;"></i><span>Dashboard</span></a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="profile.php"><i class="fas fa-book" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Activity Log</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="activityLog.php"><i class="fas fa-book" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Activity Log</span></a></li>
                     <li class="nav-item" role="presentation"><a class="nav-link" href="login.php"><i class="fas fa-door-open" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Logout</span></a></li>
                     <li class="nav-item" role="presentation"></li>
                     <li class="nav-item" role="presentation"></li>
@@ -292,29 +293,17 @@ if(isset($_POST['submitEditDueIn'])){
                                     <div class="dropdown-menu dropdown-menu-right dropdown-list dropdown-menu-right animated--grow-in"
                                         role="menu">
                                         <h6 class="dropdown-header">Notifications center</h6>
-                                        <a class="d-flex align-items-center dropdown-item" href="#">
-                                            <div class="mr-3"><i class="fa fa-check" style="font-size: 20px;color: #40c601;"></i></div>
-                                            <div><span class="small text-gray-500">December 12, 2019</span>
-                                                <p>You have recently submitted the compliance items for VAT/GST Payment</p>
-                                            </div>
-                                        </a>
-                                        <a class="d-flex align-items-center dropdown-item" href="#">
-                                            <div class="text-danger mr-3"><i class="fa fa-exclamation" style="font-size: 22px;"></i></div>
-                                            <div><span class="small text-gray-500">December 7, 2019</span>
-                                                <p>You have 2 overdue tasks. Attend to them right away</p>
-                                            </div>
-                                        </a>
-                                        <a class="d-flex align-items-center dropdown-item" href="#">
-                                            <div class="mr-3"><i class="fa fa-warning" style="font-size: 20px;color: #ffc107;"></i></div>
-                                            <div><span class="small text-gray-500">December 2, 2019</span>
-                                                <p>You have a task that is due in 30 days. Don't forget to submit before then</p>
-                                            </div>
-                                        </a><a class="text-center dropdown-item small text-gray-500" href="#">Show All Alerts</a></div>
+                                            
+                                        <?php Notify::getNotifications();
+                                        Notify::checkStatus();
+                                        ?>
+                                        
+                                  <a class="text-center dropdown-item small text-gray-500" href="#">Show All Alerts</a></div>
                                 </li>
                             </li>
                             <div class="d-none d-sm-block topbar-divider"></div>
                             <li class="nav-item dropdown no-arrow" role="presentation">
-                                <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span class="d-none d-lg-inline mr-2 text-gray-600 small"><?php Profile::getActiveUser(); ?></span><img class="border rounded-circle img-profile" src="assets/img/avatars/avatar5.jpeg"></a>
+                                <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span class="d-none d-lg-inline mr-2 text-gray-600 small"><?php Profile::getActiveUser(); ?></span><img class="border rounded-circle img-profile" src="<?php Profile::getProfilePic();?>"></a>
                                     <div
                                         class="dropdown-menu shadow dropdown-menu-right animated--grow-in" role="menu"><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Profile</a><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Settings</a>
                                         <div

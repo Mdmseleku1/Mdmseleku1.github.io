@@ -1,24 +1,81 @@
 <?php
-class Notify {
-        public static function createNotify($text = "", $postid = 0) {
-                $text = explode(" ", $text);
-                $notify = array();
-                $id = 0;
 
-                foreach ($text as $word) {
-                        if (substr($word, 0, 1) == "@") {
-                                $notify[substr($word, 1)] = array("type"=>1, "extra"=>' { "postbody": "'.htmlentities(implode($text, " ")).'" } ');
-                        }
-                }
-
-                if (count($text) == 1 && $postid != 0) {
-                        $temp = DB::query('SELECT posts.user_id AS receiver, post_likes.user_id AS sender FROM posts, post_likes WHERE posts.id = post_likes.post_id AND posts.id=:postid', array(':postid'=>$postid));
-                        $r = $temp[0]["receiver"];
-                        $s = $temp[0]["sender"];
-                        DB::query('INSERT INTO notifications VALUES (:id, :type, :receiver, :sender, :extra)', array(':id'=>$id,':type'=>2, ':receiver'=>$r, ':sender'=>$s, ':extra'=>""));
-                }
-
-                return $notify;
+    class Notify{
+        
+        public static function getNotifications(){
+            
+            $status = 0;
+            $userid = Login::isLoggedIn();
+            $notifications = DB::query('SELECT id, subject, text FROM notifications WHERE status = :status', array(':status'=>$status));
+            
+            foreach($notifications as $notify){
+                echo '<a class="d-flex align-items-center dropdown-item" href="?status=1&id='.$notify['id'].'">
+                                            <div class="mr-3"><i class="fa fa-check" style="font-size: 20px;color: #40c601;"></i></div>
+                                            <div><span class="small text-gray-500">Submitted By: '.$notify['text'].'</span>
+                                                <p>The compliance items for: '.$notify['subject'].' has been submitted</p>
+                                            </div>
+                                        </a>';
+            }
+            
         }
-}
+        
+        public static function checkNotes(){
+            $status = 0;
+            if(!DB::query('SELECT subject FROM notifications WHERE status = :status', array(':status'=>$status))){
+                echo 'grey';
+            }
+            
+            else{
+                echo 'red';
+            }
+        }
+        
+        public static function checkStatus(){
+            
+              if(isset($_GET['status'])){
+            
+              $status = $_GET['status'];
+              $noteID = $_GET['id'];
+            
+              if($status == 1){
+                  DB::query('UPDATE notifications SET status = 1 WHERE id=:id', array(':id'=>$noteID));
+              }
+            
+            }
+        }
+        
+        public static function showAllNotifications(){
+            
+            $status = 0;
+            $status2 = 1;
+            $notifications = DB::query('SELECT id, subject, text FROM notifications WHERE status = :status OR status = :status2', array(':status'=>$status, ':status2'=> $status2));
+            
+            foreach($notifications as $notify){
+                echo '<div class="row"><a class="d-flex align-items-center dropdown-item" href="?status=1&id='.$notify['id'].'">
+                                            <div class="mr-3"><i class="fa fa-check" style="font-size: 20px;color: #40c601;"></i></div>
+                                            <div><span class="small text-gray-500">Submitted By: '.$notify['text'].'</span>
+                                                <p>The compliance items for: '.$notify['subject'].' has been submitted</p>
+                                            </div>
+                                        </a></div>';
+            }
+        }
+        
+        public static function showUserNotifications(){
+            
+            $status = 0;
+            $status2 = 1;
+            $userid = Login::isLoggedIn();
+            $notifications = DB::query('SELECT id, subject, text FROM notifications WHERE status = :status OR status = :status2 AND  empID =:empID', array(':status'=>$status, ':status2'=> $status2, ':empID'=> $userid));
+            
+            foreach($notifications as $notify){
+                echo '<div class="row"><a class="d-flex align-items-center dropdown-item" href="?status=1&id='.$notify['id'].'">
+                                            <div class="mr-3"><i class="fa fa-check" style="font-size: 20px;color: #40c601;"></i></div>
+                                            <div><span class="small text-gray-500">Submitted By: '.$notify['text'].'</span>
+                                                <p>The compliance items for: '.$notify['subject'].' has been submitted</p>
+                                            </div>
+                                        </a></div>';
+            }
+        }
+    }
+
 ?>
