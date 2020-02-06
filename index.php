@@ -26,8 +26,9 @@ if(isset($_POST['submit'])){
     $dueIn = $_POST['dueIn'];
     $compliedOn = date("Y-m-d H:i:sa");
     $userid = Login::isLoggedIn();
+    $compliedOnMon = date("m");
     
-    DB::query('INSERT INTO tax VALUES(:sNo, :description, :country, :ou, :entity, :period, :fy, :dueFor, :dueIn, :empID, :compliedOn)', array(':sNo'=>$sNo, ':description'=> $itemName, ':country'=>$country, ':ou'=>$ou, ':entity'=>$entity, ':period'=> $period, ':fy'=>$fy, ':dueFor'=>$dueFor, ':dueIn'=>$dueIn, ':empID'=> $userid, ':compliedOn'=> $compliedOn));
+    DB::query('INSERT INTO tax VALUES(:sNo, :description, :country, :ou, :entity, :period, :fy, :dueFor, :dueIn, :empID, :compliedOn, :compliedOnMon)', array(':sNo'=>$sNo, ':description'=> $itemName, ':country'=>$country, ':ou'=>$ou, ':entity'=>$entity, ':period'=> $period, ':fy'=>$fy, ':dueFor'=>$dueFor, ':dueIn'=>$dueIn, ':empID'=> $userid, ':compliedOn'=> $compliedOn, ':compliedOnMon'=>$compliedOnMon));
     
     echo 'Success';
     
@@ -105,7 +106,9 @@ if(isset($_POST['submit'])){
                                         role="menu">
                                         <h6 class="dropdown-header">Notifications center</h6>
                                         
-                                        <?php Notify::getNotifications();
+                                        <?php 
+                                        Notify::checkStatus();
+                                        Notify::getNotifications();
                                         Notify::checkStatus();
                                         ?>
                                         
