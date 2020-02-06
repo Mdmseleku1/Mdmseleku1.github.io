@@ -92,8 +92,8 @@ if (isset($_POST['login'])) {
                                     </div>
                                     <form class="user" method="post" action="login.php">
                                         
-                                        <div class="form-group"><input class="form-control form-control-user" type="text" id="empID" aria-describedby="emailHelp" placeholder="Enter Staff ID" name="empID"></div>
-                                        <div class="form-group"><input class="form-control form-control-user" type="password" id="password" placeholder="Enter Password" name="password"></div>
+                                        <div class="form-group"><input class="form-control form-control-user" type="text" id="empID" aria-describedby="emailHelp" placeholder="Enter Staff ID" name="empID" required></div>
+                                        <div class="form-group"><input class="form-control form-control-user" type="password" id="password" placeholder="Enter Password" name="password" required></div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 <div class="form-check"><input class="form-check-input custom-control-input" type="checkbox" id="remember"><label class="form-check-label text-dark custom-control-label" for="remember">Remember Me</label></div>
@@ -101,6 +101,7 @@ if (isset($_POST['login'])) {
                                         </div><button class="btn btn-light btn-block text-light btn-user" type="submit" name="login" id="login" style="background-color: #3c3d41;font-size: 16px;color: #ffffff;">Login</button></form><br>
                                     <div
                                         class="text-center"><a class="text-dark small" href="forgot-password.php">Forgot Password? Click Here To Reset It</a></div>
+                            </div>
                             </div>
                         </div>
                     </div>

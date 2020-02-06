@@ -6,6 +6,7 @@ include('./classes/Login.php');
 include('./classes/Profile.php');
 include('./classes/Task.php');
 include('./classes/Notifications.php');
+include('./classes/GenerateReport.php');
 
 if (Login::isLoggedIn()) {
         $userid = Login::isLoggedIn();
@@ -36,6 +37,8 @@ if(isset($_POST['submit'])){
     $user = DB::query('SELECT firstName FROM users WHERE empID = :empID', array(':empID'=>$userid))[0]['firstName'];
     
     DB::query('INSERT INTO notifications VALUES(:id, :subject, :text, :status, :empID)', array(':id'=> $sNo, ':subject'=> $itemName, ':text'=> $user, ':status'=> $status, ':empID'=>$userid));
+    
+    header('Location: report.php');
     
 }
 
@@ -239,14 +242,7 @@ if(isset($_POST['submit'])){
                 </div>
             </div>
             <div class="col-lg-4">
-                <section><br><br>
-                    <div style="background-color: transparent;">
-                        <h1 style="font-size: 26px;padding-left: 14px;">Compliance Overview</h1>
-                        <div style="width: 255px;height: 140px;"><canvas data-bs-chart="{&quot;type&quot;:&quot;pie&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;Complied&quot;,&quot;In Progress&quot;,&quot;Not initiated / complied&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;Revenue&quot;,&quot;backgroundColor&quot;:[&quot;#52ff00&quot;,&quot;rgb(255,188,110)&quot;,&quot;#ff0000&quot;],&quot;borderColor&quot;:[&quot;transparent&quot;,&quot;transparent&quot;,&quot;transparent&quot;],&quot;data&quot;:[&quot;4500&quot;,&quot;1356&quot;,&quot;659&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:true,&quot;legend&quot;:{&quot;display&quot;:false},&quot;title&quot;:{&quot;display&quot;:false}}}"></canvas></div>
-                        <div
-                            style="width: 255px;height: 140px;"><canvas data-bs-chart="{&quot;type&quot;:&quot;bar&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;Complied&quot;,&quot;In Progress&quot;,&quot;Not initiated / complied&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;Revenue&quot;,&quot;backgroundColor&quot;:&quot;#fbb778&quot;,&quot;borderColor&quot;:&quot;transparent&quot;,&quot;borderWidth&quot;:&quot;1&quot;,&quot;data&quot;:[&quot;4500&quot;,&quot;1356&quot;,&quot;659&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:true,&quot;legend&quot;:{&quot;display&quot;:false},&quot;title&quot;:{&quot;display&quot;:false},&quot;scales&quot;:{&quot;xAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgba(255,19,19,0.1)&quot;,&quot;zeroLineColor&quot;:&quot;rgba(255,19,19,0.1)&quot;}}],&quot;yAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgba(255,19,19,0.1)&quot;,&quot;zeroLineColor&quot;:&quot;rgba(255,19,19,0.1)&quot;}}]}}}"></canvas></div>
-            </div>
-            </section>
+                <?php GenerateReport::getTaskProgress();?>
         </div>
         <div class="col">
             <h1 style="font-size: 26px;padding-left: 50px;">Overdue tasks</h1>
@@ -258,22 +254,9 @@ if(isset($_POST['submit'])){
                             <div class="media" style="overflow:visible;">
                                 <div><img class="mr-3" style="width: 50px;height: 50px;" src="assets/img/images.png"></div>
                                 <div class="media-body" style="overflow:visible;">
-                                    <div class="row">
-                                        <div class="col-10">
-                                            <h4>Overdue Task 1</h4>
-                                            <p>Overdue subtask 1<br>
-<small class="text-muted">Was Due 08/12/19 at 9:00am </small></p>
-                                            <p>Overdue subtask 2<br>
-<small class="text-muted">Was Due 20/12/19 at 9:00am </small></p>
-                                            <p>Overdue subtask 3<br>
-<small class="text-muted">Was Due 20/12/19 at 9:00am </small></p>
-                                        </div>
-                                        <div class="col-2">
-                                            <div class="dropdown pull-right"><button class="btn btn-link btn-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button"> <i class="fa fa-chevron-down"></i></button>
-                                                <div class="dropdown-menu dropdown-menu-right" role="menu"><a class="dropdown-item" role="presentation" href="#"><i class="fa fa-pencil fa-fw"></i>Complete Now</a><a class="dropdown-item" role="presentation" href="#"><i class="fa fa-trash-o fa-fw"></i>Delete </a></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
+                                    <?php GenerateReport::getLateTasks();?>
+                                    
                                 </div>
                             </div>
                         </div>

@@ -127,21 +127,21 @@ if(isset($_POST['register'])){
                             <form class="user" method="post" action="register.php">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="firstName" placeholder="First Name" name="firstName"></div>
-                                    <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="lastName" placeholder="Last Name" name="lastName"></div>
+                                    <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="lastName" placeholder="Last Name" name="lastName" required></div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="empID" placeholder="Employee ID" name="empID"></div>
-                                    <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="secretAns" placeholder="Secret" name="secretAns"></div>
+                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="empID" placeholder="Employee ID" name="empID" required></div>
+                                    <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="secretAns" placeholder="Secret" name="secretAns" required></div>
                                 </div>
-                                <div class="form-group"><input class="form-control form-control-user" type="email" id="email" aria-describedby="emailHelp" placeholder="Email Address" name="email"></div>
-                                <div class="form-group"><input class="form-control form-control-user" type="text" id="phoneNum" aria-describedby="emailHelp" placeholder="Phone Number" name="phoneNum"></div>
+                                <div class="form-group"><input class="form-control form-control-user" type="email" id="email" aria-describedby="emailHelp" placeholder="Email Address" name="email" required></div>
+                                <div class="form-group"><input class="form-control form-control-user" type="text" id="phoneNum" aria-describedby="emailHelp" placeholder="Phone Number" name="phoneNum" required></div>
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="password" id="password" placeholder="Password" name="password"></div>
-                                    <div class="col-sm-6"><input class="form-control form-control-user" type="password" id="password_repeat" placeholder="Repeat Password" name="password_repeat"></div>
+                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="password" id="password" placeholder="Password" name="password" required></div>
+                                    <div class="col-sm-6"><input class="form-control form-control-user" type="password" id="password_repeat" placeholder="Repeat Password" name="password_repeat" required></div>
                                 </div><button class="btn btn-primary btn-block text-white btn-user" type="submit" id="register" name="register">Register Account</button>
                                 <hr>
                             </form>
-                            <div class="text-center"><a class="small" href="login.html">Already have an account? Login!</a></div>
+                            <div class="text-center"><a class="small" href="login.php">Already have an account? Login!</a></div>
                         </div>
                     </div>
                 </div>
