@@ -7,11 +7,32 @@ include('./classes/Login.php');
 
 if (Login::isLoggedIn()) {
         $userid = Login::isLoggedIn();
+        $isAdmin = DB::query('SELECT isAdmin FROM users WHERE empID = :empID', array(':empID'=> $userid))[0]['isAdmin'];
 } else {
         header('Location: login.php');
 }
 
+ if(isset($_POST['submitView'])){
+
+                       $view = $_POST['view'];
+                        
+                        if(!DB::query('SELECT view FROM view WHERE empID = :empID', array(':empID'=> Login::isLoggedIn()))){ 
+                            
+                            DB::query('INSERT INTO view VALUES (:empID, :view)', array(':empID'=> Login::isLoggedIn(), ':view'=> $view)); 
+                            
+                            $view = DB::query('SELECT view FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view'];
+                            
+                        }
+                        
+                        else {
+                            DB::query('UPDATE view SET view = :view WHERE empID = :empID', array(':view'=> $view, ':empID'=> Login::isLoggedIn()));
+                            
+                            $view = DB::query('SELECT view FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view'];
+                        } 
+                    }
+
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -48,6 +69,7 @@ if (Login::isLoggedIn()) {
                 <ul class="nav navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item" role="presentation"><a class="nav-link" href="index.php" style="color: rgba(0,0,0,0.8);"><i class="fas fa-tachometer-alt" style="color: #000000;"></i><span>Dashboard</span></a></li>
                     <li class="nav-item" role="presentation"><a class="nav-link" href="profile.html"><i class="fas fa-book" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Activity Log</span></a></li>
+                     <?php if($isAdmin == 1){ echo '<li class="nav-item" role="presentation"><a class="nav-link" href="admin.php"><i class="fas fa-users-cog" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Admin</span></a></li>'; }?>
                     <li class="nav-item" role="presentation"><a class="nav-link" href="logout.php"><i class="fas fa-door-open" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Logout</span></a></li>
                     <li class="nav-item" role="presentation"></li>
                     <li class="nav-item" role="presentation"></li>
@@ -69,36 +91,13 @@ if (Login::isLoggedIn()) {
                                     </form>
                                 </div>
                             </li>
-                            <li class="nav-item dropdown no-arrow mx-1" role="presentation">
-                                <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><i class="fas fa-bell fa-fw"></i></a>
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-list dropdown-menu-right animated--grow-in"
-                                        role="menu">
-                                        <h6 class="dropdown-header">Notifications center</h6>
-                                        <a class="d-flex align-items-center dropdown-item" href="#">
-                                            <div class="mr-3"><i class="fa fa-check" style="font-size: 20px;color: #40c601;"></i></div>
-                                            <div><span class="small text-gray-500">December 12, 2019</span>
-                                                <p>You have recently submitted the compliance items for VAT/GST Payment</p>
-                                            </div>
-                                        </a>
-                                        <a class="d-flex align-items-center dropdown-item" href="#">
-                                            <div class="text-danger mr-3"><i class="fa fa-exclamation" style="font-size: 22px;"></i></div>
-                                            <div><span class="small text-gray-500">December 7, 2019</span>
-                                                <p>You have 2 overdue tasks. Attend to them right away</p>
-                                            </div>
-                                        </a>
-                                        <a class="d-flex align-items-center dropdown-item" href="#">
-                                            <div class="mr-3"><i class="fa fa-warning" style="font-size: 20px;color: #ffc107;"></i></div>
-                                            <div><span class="small text-gray-500">December 2, 2019</span>
-                                                <p>You have a task that is due in 30 days. Don't forget to submit before then</p>
-                                            </div>
-                                        </a><a class="text-center dropdown-item small text-gray-500" href="#">Show All Alerts</a></div>
-                                </li>
-                            </li>
                             <div class="d-none d-sm-block topbar-divider"></div>
                             <li class="nav-item dropdown no-arrow" role="presentation">
                                 <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span class="d-none d-lg-inline mr-2 text-gray-600 small"><?php Profile::getActiveUser();?></span><img class="border rounded-circle img-profile" src="<?php Profile::getProfilePic();?>"></a>
                                     <div
                                         class="dropdown-menu shadow dropdown-menu-right animated--grow-in" role="menu"><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Profile</a><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Settings</a>
+                                        <a class="dropdown-item" role="presentation" href="change-password.php"><i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Change Password</a>
+                                        <?php if($isAdmin == 1){ echo '<a class="dropdown-item" role="presentation" href="admin.php"><i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Admin</a>'; }?>
                                         <div
                                             class="dropdown-divider"></div><a class="dropdown-item" role="presentation" href="login.php"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Logout</a></div>
             </li>
@@ -115,6 +114,15 @@ if (Login::isLoggedIn()) {
                     <div><button onclick="printRep()" class="btn btn-dark" type="button">Print</button></div>
                 </div>
                 <div class="col-lg-3"><button class="btn btn-primary" type="button" style="background-color: #eb192e;">Email</button></div>
+            </div>
+            <div class="row">
+            <div class="container">
+                <form action="report.php" method="post">
+                      <input type="radio" name="view" id="view" value="viewOwn" /> View My Own Report<br>
+                      <input type="radio" name="view" id="view" value="viewComp" /> View Company Wide Report<br><br>
+                      <button class="btn btn-dark btn-sm" type="submit" id="submitView" name="submitView">Select</button>
+                    </form>
+                </div>
             </div>
         </div>
         <div class="container my-4 mx-4" id="print">	
@@ -146,8 +154,17 @@ if (Login::isLoggedIn()) {
     <tbody>
     <!-- 1. -->
         
-    <?php    
+    <?php
+        
+        $view = GenerateAdminReport::checkView();
+        
+        if($isAdmin == 0 && $view == "viewOwn"){
         GenerateReport::getTaxReportData();
+        }
+        
+        if($isAdmin == 1 && $view == "viewComp") {
+        GenerateAdminReport::getAdminTaxReportData();
+        }
     ?>
 </tbody>
   

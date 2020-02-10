@@ -24,6 +24,7 @@ if(isset($_POST['register'])){
     $phoneNum = $_POST['phoneNum'];
     $secretAns = $_POST['secretAns'];
     $deptID = 1;
+    $isAdmin = 0;
   
     if(!DB::query('SELECT empID FROM users WHERE empID=:empID', array(':empID'=>$empID))){
         if(!DB::query('SELECT email FROM users WHERE email=:email', array(':email'=>$email))){
@@ -38,7 +39,7 @@ if(isset($_POST['register'])){
                     
                     if($password == $passwordrepeat){
                         
-                        DB::query('INSERT INTO users VALUES(:empID, :firstName, :lastName, :email, :phoneNum, :password, :securityAns, :profilePic, :deptID)', array(':empID'=>$empID, ':firstName'=> $firstName, 'lastName'=>$lastName, ':email'=>$email, 'phoneNum'=>$phoneNum, ':password'=>password_hash($password,PASSWORD_BCRYPT), ':securityAns'=>$secretAns, ':profilePic'=>$profileImage, ':deptID'=>$deptID));
+                        DB::query('INSERT INTO users VALUES(:empID, :firstName, :lastName, :email, :phoneNum, :password, :securityAns, :profilePic, :deptID, :isAdmin)', array(':empID'=>$empID, ':firstName'=> $firstName, 'lastName'=>$lastName, ':email'=>$email, 'phoneNum'=>$phoneNum, ':password'=>password_hash($password,PASSWORD_BCRYPT), ':securityAns'=>$secretAns, ':profilePic'=>$profileImage, ':deptID'=>$deptID, ':isAdmin'=>$isAdmin));
         
                 
         echo "Success";

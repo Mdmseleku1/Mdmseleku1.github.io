@@ -9,8 +9,13 @@ include('./classes/Notifications.php');
 
 if (Login::isLoggedIn()) {
         $userid = Login::isLoggedIn();
+        $isAdmin = DB::query('SELECT isAdmin FROM users WHERE empID = :empID', array(':empID'=> $userid))[0]['isAdmin'];
 } else {
         header('Location: login.php');
+}
+
+if($isAdmin == 0){
+    die('You do not have admin privileges');
 }
 
 
@@ -230,6 +235,22 @@ if(isset($_POST['submitEditDueIn'])){
     DueInAdmin::editDueInVal($dueInOldVal, $dueInNewVal);
     }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Logic to perform access control operations
+
+if(isset($_POST['submitDelAdmin'])){
+    $delAdmin = $_POST['delAdmin'];
+    
+    UserAdminPermissions::removeAdmin($delAdmin);
+}
+
+if(isset($_POST['submitNewAdmin'])){
+    $userAdmin = $_POST['userAdmin'];
+    
+    UserAdminPermissions::setAdmin($userAdmin);
+}
+
+
 
 ?>
 
@@ -262,6 +283,7 @@ if(isset($_POST['submitEditDueIn'])){
                 <ul class="nav navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item" role="presentation"><a class="nav-link" href="index.php" style="color: rgba(0,0,0,0.8);"><i class="fas fa-tachometer-alt" style="color: #000000;"></i><span>Dashboard</span></a></li>
                     <li class="nav-item" role="presentation"><a class="nav-link" href="activityLog.php"><i class="fas fa-book" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Activity Log</span></a></li>
+                    <?php if($isAdmin == 1){ echo '<li class="nav-item" role="presentation"><a class="nav-link active" href="admin.php"><i class="fas fa-users-cog" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Admin</span></a></li>'; }?>
                     <li class="nav-item" role="presentation"><a class="nav-link" href="login.php"><i class="fas fa-door-open" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Logout</span></a></li>
                     <li class="nav-item" role="presentation"></li>
                     <li class="nav-item" role="presentation"></li>
@@ -305,7 +327,8 @@ if(isset($_POST['submitEditDueIn'])){
                             <li class="nav-item dropdown no-arrow" role="presentation">
                                 <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span class="d-none d-lg-inline mr-2 text-gray-600 small"><?php Profile::getActiveUser(); ?></span><img class="border rounded-circle img-profile" src="<?php Profile::getProfilePic();?>"></a>
                                     <div
-                                        class="dropdown-menu shadow dropdown-menu-right animated--grow-in" role="menu"><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Profile</a><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Settings</a>
+                                        class="dropdown-menu shadow dropdown-menu-right animated--grow-in" role="menu"><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Profile</a><a class="dropdown-item" role="presentation" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Settings</a><a class="dropdown-item" role="presentation" href="change-password.php"><i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Change Password</a>
+                                         <?php if($isAdmin == 1){ echo '<a class="dropdown-item" role="presentation" href="admin.php"><i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Admin</a>'; }?>
                                         <div
                                             class="dropdown-divider"></div><a class="dropdown-item" role="presentation" href="login.php"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Logout</a></div>
             </li>
@@ -990,6 +1013,67 @@ if(isset($_POST['submitEditDueIn'])){
                         </div>
                     </div>
                 </div>
+                                <div class="card">
+                    <div class="card-header" role="tab">
+                        <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-9" href="div#accordion-1 .item-9">Access Control</a></h5>
+                    </div>
+                    <div class="collapse item-9" role="tabpanel" data-parent="#accordion-1">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <?php UserAdminPermissions::getUsers(); ?>
+                                </div>
+                                <div class="col"><button data-toggle="modal" data-target="#modalNewAdmin" class="btn btn-success" type="button" style="font-size: 14px;">Add New Admin</button>
+                                
+                                     <div class="modal fade" role="dialog" tabindex="-1" id="modalNewAdmin">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title text-primary">Give Admin Privileges To New User<br></h3><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col padMar margenesCajas">
+                                                                <p class="text-secondary p-0 m-0 p-2">You can use this form to grant admin privileges to a use. Simply input their employee ID and submit <br></p>
+                                                            </div>
+                                                        </div>
+                                                        <form action="admin.php" class="p-4" method="post">
+                                                            <div class="form-group"><input class="form-control" type="text" name="userAdmin" placeholder="User to make admin" id="userAdmin"></div>
+                                                            <div class="form-group"><button name="submitNewAdmin" id="submitNewAdmin" class="btn btn-dark btn-block" type="submit">Submit</button></div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                </div>
+                                <div class="col"><button data-toggle="modal" data-target="#modalDelAdmin" class="btn btn-danger" type="button" style="font-size: 14px;">Remove Admin</button>
+                                
+                                     <div class="modal fade" role="dialog" tabindex="-1" id="modalDelAdmin">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title text-primary">Revoke Admin Privileges For User<br></h3><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col padMar margenesCajas">
+                                                                <p class="text-secondary p-0 m-0 p-2">You can use this form to revoke the admin privileges for any user. Simply enter their employee ID and submit<br></p>
+                                                            </div>
+                                                        </div>
+                                                        <form action="admin.php" class="p-4" method="post">
+                                                            <div class="form-group"><input class="form-control" type="text" name="delAdmin" placeholder="User to remove" id="delAdmin"></div>
+                                                            <div class="form-group"><button name="submitDelAdmin" id="submitDelAdmin" class="btn btn-dark btn-block" type="submit">Submit</button></div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>

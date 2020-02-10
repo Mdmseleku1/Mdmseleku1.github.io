@@ -409,6 +409,51 @@ class DueInAdmin{
     }
 }
 
+class UserAdminPermissions{
+    
+    public static function setAdmin($empID){
+        
+        $isAdmin = 1;
+        
+        DB::query('UPDATE users SET isAdmin = :isAdmin WHERE empID = :empID', array(':isAdmin'=>$isAdmin ,':empID'=>$empID));
+        echo 'Success';
+        
+    }
+    
+    public static function removeAdmin($empID){
+        $isAdmin = 0;
+        
+        DB::query('UPDATE users SET isAdmin = :isAdmin WHERE empID = :empID', array(':isAdmin'=> $isAdmin, ':empID'=>$empID));
+        echo 'Success';
+    }
+    
+    public static function getUsers(){
+        $users = DB::query('SELECT empID, firstName, lastName, deptID, isAdmin FROM users');
+        
+        foreach($users as $user) {
+            
+                if($user['isAdmin'] == 0){
+            
+                echo '
+                <h4>Non-Admin User</h4><br>
+                <p>Employee ID: '.$user['empID'].'</p><br>
+                <p>Name: '.$user['firstName'].' '.$user['lastName'].'</p><br>
+                <p>Department: '.$user['deptID'].'</p><br><hr>';
+            }
+            
+                else{
+                    echo '
+                    <h4>Admin User</h4><br>
+                    <p>Employee ID: '.$user['empID'].'</p><br>
+                    <p>Name: '.$user['firstName'].' '.$user['lastName'].'</p><br>
+                    <p>Department: '.$user['deptID'].'</p><br><hr>';
+                }
+        }
+    }
+    
+}
+
+
 
 
 ?>

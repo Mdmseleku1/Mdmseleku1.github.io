@@ -23,7 +23,7 @@ if (Login::isLoggedIn()) {
                                         DB::query('UPDATE users SET password=:newPassword WHERE empID=:userID', array(':newPassword'=>password_hash($newPassword, PASSWORD_BCRYPT), ':userID'=>$userID));
                                         echo 'Password changed successfully!';
                                     
-                                    header('Location: sign-in.php');
+                                    header('Location: login.php');
                                 }
 
                         } else {
@@ -39,8 +39,8 @@ if (Login::isLoggedIn()) {
 } else {
         if (isset($_GET['token'])) {
         $token = $_GET['token'];
-        if (DB::query('SELECT empID FROM password_tokens WHERE token=:token', array(':token'=>sha1($token)))) {
-                $userID = DB::query('SELECT empID FROM password_tokens WHERE token=:token', array(':token'=>sha1($token)))[0]['empID'];
+        if (DB::query('SELECT empID FROM password_tokens WHERE token = :token', array(':token'=>sha1($token)))) {
+                $userID = DB::query('SELECT empID FROM password_tokens WHERE token = :token', array(':token'=>sha1($token)))[0]['empID'];
                 $tokenIsValid = True;
                 if (isset($_POST['changePassword'])) {
 
@@ -51,9 +51,9 @@ if (Login::isLoggedIn()) {
 
                                         if (strlen($newPassword) >= 6 && strlen($newPassword) <= 60) {
 
-                                                DB::query('UPDATE users SET password=:newPassword WHERE empID=:userID', array(':newPassword'=>password_hash($newPassword, PASSWORD_BCRYPT), ':userID'=>$userID));
+                                                DB::query('UPDATE users SET password = :newPassword WHERE empID = :userID', array(':newPassword'=>password_hash($newPassword, PASSWORD_BCRYPT), ':userID'=>$userID));
                                                 echo 'Password changed successfully!';
-                                                DB::query('DELETE FROM password_tokens WHERE empID=:userID', array(':userID'=>$userID));
+                                                DB::query('DELETE FROM password_tokens WHERE empID = :userID', array(':userID'=>$userID));
                                             
                                             header('Location: login.php');
                                         }
@@ -115,14 +115,15 @@ if (Login::isLoggedIn()) {
                                         }?>
                                         
                                     </div>
-                                    <form class="user" method="post" action="change-password.php">
+                                    <form class="user" method="post" <?php if(!Login::isLoggedIn()){$token = $_GET['token']; echo 'action = "change-password.php?token='.$token.'"';} else{echo 'action="change-password.php"';}?>>
                                         
+                                        <?php if(Login::isLoggedIn()){echo '<div class="form-group"><input class="form-control form-control-user" type="password" id="oldPassword" aria-describedby="emailHelp" placeholder="Old Password" name="oldPassword"></div>';}?>
                                         <div class="form-group"><input class="form-control form-control-user" type="password" id="newPassword" aria-describedby="emailHelp" placeholder="New Password" name="newPassword"></div>
                                         <div class="form-group"><input class="form-control form-control-user" type="password" id="newPasswordRepeat" placeholder="Repeat New Password" name="newPasswordRepeat"></div>
                                         <div class="form-group">
                                         </div><button class="btn btn-light btn-block text-light btn-user" type="submit" name="changePassword" id="changePassword" style="background-color: #3c3d41;font-size: 16px;color: #ffffff;">Reset Password</button></form><br>
                                     <div
-                                        class="text-center"><a class="text-dark small" href="login.php">Made a mistake? Click here to login</a></div>
+                                        class="text-center"><a class="text-dark small" href="login.php">Made a mistake? Click here to login or go back to the dashboard</a></div>
                             </div>
                         </div>
                     </div>

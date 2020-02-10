@@ -46,7 +46,6 @@ class GenerateMainReport{
                 <td class='alert ".$class."'>".$status."</td>
                 <td>ref Tax tab
                 </td>
-
                 </tr>";
         }
 
