@@ -54,7 +54,7 @@
                 echo '<div class="row"><a class="d-flex align-items-center dropdown-item" href="?status=1&id='.$notify['id'].'">
                                             <div class="mr-3"><i class="fa fa-check" style="font-size: 20px;color: #40c601;"></i></div>
                                             <div><span class="small text-gray-500">Submitted By: '.$notify['text'].'</span>
-                                                <p>The compliance items for: '.$notify['subject'].' has been submitted</p>
+                                                <p>The compliance items for: '.$notify['subject'].' have been submitted</p>
                                             </div>
                                         </a></div>';
             }
@@ -71,7 +71,7 @@
                 echo '<div class="row"><a class="d-flex align-items-center dropdown-item" href="?status=1&id='.$notify['id'].'">
                                             <div class="mr-3"><i class="fa fa-check" style="font-size: 20px;color: #40c601;"></i></div>
                                             <div><span class="small text-gray-500">Submitted By: '.$notify['text'].'</span>
-                                                <p>The compliance items for: '.$notify['subject'].' has been submitted</p>
+                                                <p>The compliance items for: '.$notify['subject'].' have been submitted</p>
                                             </div>
                                         </a></div>';
             }

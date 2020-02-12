@@ -44,12 +44,15 @@ if(isset($_POST['submit'])){
 }
 
  if(isset($_POST['submitView'])){
+                        
+                        $view2 = "viewOwn";
+                       $view3 = "viewOwn";
 
                        $view = $_POST['view'];
                         
                         if(!DB::query('SELECT view FROM view WHERE empID = :empID', array(':empID'=> Login::isLoggedIn()))){ 
                             
-                            DB::query('INSERT INTO view VALUES (:empID, :view)', array(':empID'=> Login::isLoggedIn(), ':view'=> $view)); 
+                            DB::query('INSERT INTO view VALUES (:empID, :view, :view2, :view3)', array(':empID'=> Login::isLoggedIn(), ':view'=>$view, ':view2'=> $view2, ':view3'=> $view3)); 
                             
                             $view = DB::query('SELECT view FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view'];
                             
@@ -63,12 +66,15 @@ if(isset($_POST['submit'])){
 }
 
  if(isset($_POST['submitView2'])){
+     
+      $view2 = "viewOwn";
+                       $view3 = "viewOwn";
 
                        $view = $_POST['view2'];
                         
                         if(!DB::query('SELECT view2 FROM view WHERE empID = :empID', array(':empID'=> Login::isLoggedIn()))){ 
                             
-                            DB::query('INSERT INTO view VALUES (:empID, :view2)', array(':empID'=> Login::isLoggedIn(), ':view2'=> $view)); 
+                            DB::query('INSERT INTO view VALUES (:empID, :view, :view2, :view3)', array(':empID'=> Login::isLoggedIn(), ':view'=>$view2, ':view2'=> $view, ':view3'=> $view3)); 
                             
                             $view = DB::query('SELECT view2 FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view2'];
                             
@@ -136,6 +142,8 @@ if(isset($_POST['submit'])){
                             <select class="selectpicker show-tick" id="taskGroup" data-live-search="true" 
                             title="Filter By Task..." data-width="35%" data-style="btn-light" 
                             onchange="filterTasks();">
+                                <option value="empty">
+                                </option>
                                 <option data-tokens="payment" value="VAT/GST Payment">
                                     VAT/GST Payment
                                 </option>
@@ -307,7 +315,7 @@ if(isset($_POST['submit'])){
             </div>
             <div class="col-lg-4">
                 
-                <div class="row">
+                <?php if($isAdmin == "1"){echo '<div class="row">
             <div class="container">
                 <form action="index.php" method="post">
                       <input type="radio" name="view2" id="view2" value="viewOwn" /> View My Own Task Progress<br>
@@ -316,7 +324,7 @@ if(isset($_POST['submit'])){
                     </form>
                 <br>
                 </div>
-            </div>
+            </div>';}?>
                 
                 <?php 
                 
@@ -338,7 +346,7 @@ if(isset($_POST['submit'])){
         <div class="col">
             <h1 style="font-size: 26px;padding-left: 50px;">Overdue tasks</h1>
             <ul class="list-group">
-                <div class="row">
+                 <?php if($isAdmin == "1"){echo ' <div class="row">
             <div class="container">
                 <form action="index.php" method="post">
                       <input type="radio" name="view" id="view" value="viewOwn" /> View My Own Late Tasks<br>
@@ -347,7 +355,7 @@ if(isset($_POST['submit'])){
                     </form>
                 <br>
                 </div>
-            </div>
+            </div>';}?>
                 <li class="list-group-item">
                     <div class="media">
                         <div></div>
@@ -420,82 +428,52 @@ if(isset($_POST['submit'])){
             });
         }
 
-        function filterTasks(){
+       function filterTasks(){
             let tasks = document.getElementById("taskGroup").selectedIndex;
             let indTask = document.getElementsByTagName("option")[tasks].value;
             
             let monthlyTasksDiv = document.querySelector("#monthlyTasks");
             let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noMonthlyTasks");
             let rule = monthlyTasksDiv.querySelector("hr");
             
             let mayTaskGroup = document.getElementById("mayTasks");
             let mayTasks = mayTaskGroup.getElementsByTagName("p");
+            let noMayTasks = document.getElementById("noMayTasks");
             let mayRule =  mayTaskGroup.querySelector("hr");
             
             let juneTaskGroup = document.getElementById("juneTasks");
             let juneTasks = juneTaskGroup.getElementsByTagName("p");
+            let noJuneTasks = document.getElementById("noJuneTasks");
             let juneRule = juneTaskGroup.querySelector("hr");
 
             let  julyTaskGroup = document.getElementById("julyTasks");
             let julyTasks = julyTaskGroup.getElementsByTagName("p");
+            let noJulyTasks = document.getElementById("noJulyTasks");
             let julyRule = julyTaskGroup.querySelector("hr");
-        
-            let count = 0;
-            for (i = 0; i < listedTasks.length; i++){
-                if (!listedTasks[i].innerText.includes(indTask)){
-                    rule.style.display = "none";
-                    listedTasks[i].style.display = "none";
-                    count++;     
-                }else{
-                    listedTasks[i].style.display = "block";
-                }
-            }
-            if (count == listedTasks.length){
-                document.getElementById("noMonthlyTasks").style.display = "block";
-            }else
-                document.getElementById("noMonthlyTasks").style.display = "none";
-            
-            count = 0;
-            for (i = 0; i < mayTasks.length; i++){
-               if (!mayTasks[i].innerText.includes(indTask)){
-                    count++;
-                    mayRule.style.display = "none";
-                    mayTasks[i].style.display = "none";            
-               }else
-                    mayTasks[i].style.display = "block";
-            }
-            if (count == mayTasks.length){
-                document.getElementById("noMayTasks").style.display = "block";
-            }else
-                document.getElementById("noMayTasks").style.display = "none";
-            
-            count = 0;
-            for (i = 0; i < juneTasks.length; i++){
-                if (!juneTasks[i].innerText.includes(indTask)){
-                    count++;
-                    juneRule.style.display = "none";
-                    juneTasks[i].style.display = "none";     
-                }else
-                    juneTasks[i].style.display = "block";     
-            }
-            if (count == juneTasks.length){
-                document.getElementById("noJuneTasks").style.display = "block";
-            }else
-                document.getElementById("noJuneTasks").style.display = "none";
 
-            count = 0;    
-            for (i = 0; i < julyTasks.length; i++){
-                if (!julyTasks[i].innerText.includes(indTask)){
-                    count++;
-                    juneRule.style.display = "none";
-                    julyTasks[i].style.display = "none";     
+            let allTasks = [listedTasks, mayTasks, juneTasks, julyTasks];
+            let noTasks = [noMonthlyTasks, noMayTasks, noJuneTasks, noJulyTasks];
+            let noHorizontalRules = [rule, mayRule, juneRule, julyRule];
+            let count = 0;
+            
+            for (let i = 0; i < allTasks.length; i++){
+                for (let j = 0; j < allTasks[i].length; j++){
+                    if (!allTasks[i][j].innerText.includes(indTask) && indTask != "empty"){
+                        allTasks[i][j].style.display = "none";
+                        noHorizontalRules[i].style.display = "none";
+                        count++;
+                    }else{
+                        allTasks[i][j].style.display = "block";
+                    }
+                }
+                if (count == allTasks[i].length){
+                    noHorizontalRules[i].style.display = "none";
+                    noTasks[i].style.display = "block";    
                 }else
-                    julyTasks[i].style.display = "block";
+                    noTasks[i].style.display = "none";
+                count = 0;    
             }
-            if (count == julyTasks.length)
-                document.getElementById("noJulyTasks").style.display = "block";
-            else
-                document.getElementById("noJulyTasks").style.display = "none";
         }
 
     </script>

@@ -116,8 +116,6 @@ class GenerateReport{
         
         $late = DB::query('SELECT late FROM tracktaskprogress WHERE empID = :empID ORDER BY id DESC LIMIT 1', array(':empID'=>Login::isLoggedIn()))[0]['late'];
         
-        echo '<p>Number of late tasks: '.$late.'</p>';
-        
         $empID = Login::isLoggedIn();
         
         $compliedItems = DB::query('SELECT sNo, description, country, ou, entity, period, fy, dueFor, dueIn, empID, compliedOn, compliedOnMon FROM tax WHERE empID = :empID ORDER BY sNo DESC;', array(':empID'=>$empID));
@@ -183,6 +181,22 @@ class GenerateAdminReport{
             else {
             
          $view = DB::query('SELECT view2 FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view2'];
+                }
+        
+        return $view;
+    }
+    
+            public static function checkView3(){
+        
+            if(!DB::query('SELECT view3 FROM view WHERE empID = :empID', array(':empID'=> Login::isLoggedIn()))){ 
+                            
+         $view = 'viewOwn';  
+                            
+            }
+                
+            else {
+            
+         $view = DB::query('SELECT view3 FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view3'];
                 }
         
         return $view;

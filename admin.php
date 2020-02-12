@@ -311,16 +311,18 @@ if(isset($_POST['submitNewAdmin'])){
                                 </div>
                             </li>
                             <li class="nav-item dropdown no-arrow mx-1" role="presentation">
-                                <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><i class="fas fa-bell fa-fw"></i></a>
+                                <li class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><i class="fas fa-bell fa-fw" style="color:<?php Notify::checkNotes()?>"></i></a>
                                     <div class="dropdown-menu dropdown-menu-right dropdown-list dropdown-menu-right animated--grow-in"
                                         role="menu">
                                         <h6 class="dropdown-header">Notifications center</h6>
                                             
-                                        <?php Notify::getNotifications();
+                                        <?php 
+                                        Notify::checkStatus();
+                                        Notify::getNotifications();
                                         Notify::checkStatus();
                                         ?>
                                         
-                                  <a class="text-center dropdown-item small text-gray-500" href="#">Show All Alerts</a></div>
+                                  <a class="text-center dropdown-item small text-gray-500" href="notifications.php">Show All Alerts</a></div>
                                 </li>
                             </li>
                             <div class="d-none d-sm-block topbar-divider"></div>

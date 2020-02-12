@@ -14,20 +14,22 @@ if (Login::isLoggedIn()) {
 
  if(isset($_POST['submitView'])){
 
-                       $view = $_POST['view'];
+                       $view = $_POST['view'];  
+                       $view2 = "viewOwn";
+                       $view3 = "viewOwn";
                         
-                        if(!DB::query('SELECT view FROM view WHERE empID = :empID', array(':empID'=> Login::isLoggedIn()))){ 
+                        if(!DB::query('SELECT view3 FROM view WHERE empID = :empID', array(':empID'=> Login::isLoggedIn()))){ 
                             
-                            DB::query('INSERT INTO view VALUES (:empID, :view)', array(':empID'=> Login::isLoggedIn(), ':view'=> $view)); 
+                            DB::query('INSERT INTO view VALUES (:empID, :view, :view2, :view3)', array(':empID'=> Login::isLoggedIn(), ':view'=>$view2, ':view2'=> $view3, ':view3'=> $view)); 
                             
-                            $view = DB::query('SELECT view FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view'];
+                            $view = DB::query('SELECT view3 FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view3'];
                             
                         }
                         
                         else {
-                            DB::query('UPDATE view SET view = :view WHERE empID = :empID', array(':view'=> $view, ':empID'=> Login::isLoggedIn()));
+                            DB::query('UPDATE view SET view3 = :view WHERE empID = :empID', array(':view'=> $view, ':empID'=> Login::isLoggedIn()));
                             
-                            $view = DB::query('SELECT view FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view'];
+                            $view = DB::query('SELECT view3 FROM view WHERE empID =:empID', array(':empID'=> Login::isLoggedIn()))[0]['view3'];
                         } 
                     }
 
@@ -114,8 +116,7 @@ if (Login::isLoggedIn()) {
                     <div><button onclick="printRep()" class="btn btn-dark" type="button">Print</button></div>
                 </div>
                 <div class="col-lg-3"><button class="btn btn-primary" type="button" style="background-color: #eb192e;">Email</button></div>
-            </div>
-            <div class="row">
+            </div><?php if($isAdmin == "1"){echo '<div class="row">
             <div class="container">
                 <form action="report.php" method="post">
                       <input type="radio" name="view" id="view" value="viewOwn" /> View My Own Report<br>
@@ -123,7 +124,7 @@ if (Login::isLoggedIn()) {
                       <button class="btn btn-dark btn-sm" type="submit" id="submitView" name="submitView">Select</button>
                     </form>
                 </div>
-            </div>
+            </div>';}?>
         </div>
         <div class="container my-4 mx-4" id="print">	
       <table id="dtBasicExample" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -156,14 +157,20 @@ if (Login::isLoggedIn()) {
         
     <?php
         
-        $view = GenerateAdminReport::checkView();
+        $view = GenerateAdminReport::checkView3();
         
-        if($isAdmin == 0 && $view == "viewOwn"){
-        GenerateReport::getTaxReportData();
+        if($isAdmin == "1"){
+            if($view == "viewOwn"){
+            GenerateReport::getTaxReportData();
+            }
+
+            if($view == "viewComp") {
+            GenerateAdminReport::getAdminTaxReportData();
+            }
         }
         
-        if($isAdmin == 1 && $view == "viewComp") {
-        GenerateAdminReport::getAdminTaxReportData();
+        else {
+            GenerateReport::getTaxReportData();
         }
     ?>
 </tbody>

@@ -430,7 +430,17 @@ class UserAdminPermissions{
     public static function getUsers(){
         $users = DB::query('SELECT empID, firstName, lastName, deptID, isAdmin FROM users');
         
+        $dept = "";
+        
         foreach($users as $user) {
+            
+            switch($user['deptID']){
+                case "1": $dept = "Tax";
+                    break;
+                case "2": $dept = "HR";
+                    break;
+                default: $dept = "Tax";
+            }
             
                 if($user['isAdmin'] == 0){
             
@@ -438,7 +448,7 @@ class UserAdminPermissions{
                 <h4>Non-Admin User</h4><br>
                 <p>Employee ID: '.$user['empID'].'</p><br>
                 <p>Name: '.$user['firstName'].' '.$user['lastName'].'</p><br>
-                <p>Department: '.$user['deptID'].'</p><br><hr>';
+                <p>Department: '.$dept.'</p><br><hr>';
             }
             
                 else{
@@ -446,7 +456,7 @@ class UserAdminPermissions{
                     <h4>Admin User</h4><br>
                     <p>Employee ID: '.$user['empID'].'</p><br>
                     <p>Name: '.$user['firstName'].' '.$user['lastName'].'</p><br>
-                    <p>Department: '.$user['deptID'].'</p><br><hr>';
+                    <p>Department: '.$dept.'</p><br><hr>';
                 }
         }
     }
