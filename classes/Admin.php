@@ -152,13 +152,13 @@ class EntityAdmin{
 
 class ParticularsAdmin{
     
-           public static function addParticularsVal($id, $particularsVal, $deptID){
+     public static function addParticularsVal($id, $particularsVal, $deptID, $taskType, $linkedTo){
            
         $errors = array();
         
         if(!DB::query('SELECT task FROM task_details WHERE task = :task', array(':task'=> $particularsVal))){
             
-        DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID));
+        DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo));
         echo 'Success';
             
         }
@@ -191,11 +191,61 @@ class ParticularsAdmin{
         public static function delParticularsVal($particularsValDel){
         
         if(DB::query('SELECT task FROM task_details WHERE task = :task', array(':task'=> $particularsValDel))){
+            
+            if(!DB::query('SELECT linkedTo FROM task_details WHERE linkedTo = :task', array(':task'=> $particularsValDel))){
         
         DB::query('DELETE FROM task_details WHERE task = :task', array(':task'=>$particularsValDel));
         echo 'Success';
+                }
+            
+            else{
+                echo 'Cannot delete task because it is a main task that has dependant tasks';
+            }
+
+            }
+            
+                        
+            else{
+                echo 'Cannot delete that task because it does not exist';
+            }
         }
-    }
+    
+    
+        public static function getMainTasks(){
+            
+            $taskType = 1;
+            $notLinked = 0;
+            $empty = '';
+
+            $mainTasks  = DB::query('SELECT id ,task FROM task_details WHERE taskType = :taskType ORDER BY id ASC LIMIT 3', array(':taskType'=>$taskType));
+            
+            foreach($mainTasks as $main){
+                
+                $subTasks = DB::query('SELECT * FROM task_details WHERE linkedTo != :notLinkedTo AND linkedTo != :empty AND linkedTo = :linkedToName', array(':notLinkedTo'=>$notLinked, ':empty'=>$empty, ':linkedToName'=>$main['task']));
+                
+                
+                echo '
+                            <div class="carousel-item col-sm-10">
+                            <div class="card">
+                              <div class="card-body">
+                                <h4 class="card-title">'.$main['task'].'</h4>
+                                ';
+                
+                foreach($subTasks as $task){
+                    echo '
+                          <p class="card-text">'.$task['task'].'.</p>
+                          <p class="card-text"><small class="text-muted">Task is due: </small></p>
+                    ';
+                }
+                
+                echo'</div>
+                            </div></div>
+                          ';
+                              
+                      
+            }
+            
+        }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

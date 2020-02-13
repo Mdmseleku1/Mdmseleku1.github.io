@@ -7,6 +7,7 @@ include('./classes/Profile.php');
 include('./classes/Task.php');
 include('./classes/Notifications.php');
 include('./classes/GenerateReport.php');
+include('./classes/Admin.php');
 
 if (Login::isLoggedIn()) {
         $userid = Login::isLoggedIn();
@@ -29,8 +30,9 @@ if(isset($_POST['submit'])){
     $compliedOn = date("Y-m-d H:i:sa");
     $userid = Login::isLoggedIn();
     $compliedOnMon = date("m");
+    $dueDay = $_POST['dueDay'];
     
-    DB::query('INSERT INTO tax VALUES(:sNo, :description, :country, :ou, :entity, :period, :fy, :dueFor, :dueIn, :empID, :compliedOn, :compliedOnMon)', array(':sNo'=>$sNo, ':description'=> $itemName, ':country'=>$country, ':ou'=>$ou, ':entity'=>$entity, ':period'=> $period, ':fy'=>$fy, ':dueFor'=>$dueFor, ':dueIn'=>$dueIn, ':empID'=> $userid, ':compliedOn'=> $compliedOn, ':compliedOnMon'=>$compliedOnMon));
+    DB::query('INSERT INTO tax VALUES(:sNo, :description, :country, :ou, :entity, :period, :fy, :dueFor, :dueIn, :empID, :compliedOn, :compliedOnMon, :day)', array(':sNo'=>$sNo, ':description'=> $itemName, ':country'=>$country, ':ou'=>$ou, ':entity'=>$entity, ':period'=> $period, ':fy'=>$fy, ':dueFor'=>$dueFor, ':dueIn'=>$dueIn, ':empID'=> $userid, ':compliedOn'=> $compliedOn, ':compliedOnMon'=>$compliedOnMon,':day'=>$dueDay));
     
     echo 'Success';
     
@@ -231,13 +233,22 @@ if(isset($_POST['submit'])){
                                             <div
                                                 class="form-group"><label>OU</label><select id="ou" name="ou" class="form-control"><optgroup label="Select OU"><?php GenerateTaxFormFields::getOUFields(); ?></optgroup></select></div>
                                             
-                                    <div class="form-group"><label>Fiscal Year</label><select id="fy" name="fy" class="form-control"><optgroup label="Select Fiscal Year"><?php GenerateTaxFormFields::getFYFields(); ?></optgroup></select></div>
+                                    <div class="form-group" onchange="dueDate()"><label>Fiscal Year</label><select id="fy" name="fy" class="form-control"><optgroup label="Select Fiscal Year"><?php GenerateTaxFormFields::getFYFields(); ?></optgroup></select></div>
                                     <div
                                         class="form-group"><label>Periodicity</label><select id="period" name="period" class="form-control"><optgroup label="Select Periodicity"><?php GenerateTaxFormFields::getPeriodFields(); ?></optgroup></select></div>
                                 <div
                                     class="form-group"><label>Due For</label><select id="dueFor" name="dueFor" class="form-control"><optgroup label="Due For"><?php GenerateTaxFormFields::getDueForFields(); ?></optgroup></select></div>
                             <div
-                                class="form-group"><label>Due In Month</label><select id="dueIn" name="dueIn" class="form-control"><optgroup label="Due In Month"><?php GenerateTaxFormFields::getDueInFields(); ?></optgroup></select></div>
+                                class="form-group"><label>Due In Month</label><select id="dueIn" name="dueIn" class="form-control"><optgroup label="Due In Month"><?php GenerateTaxFormFields::getDueInFields(); ?></optgroup></select>
+                            </div>
+                          <div class="form-group row ml-1" style="display: none;" id="dueDayDiv">
+                                <label for="dueDay" class="col-sm-3col-form-label">Due In Day</label>
+                                <select id="dueDay" name="dueDay" class="">
+                                    <optgroup label="Due In Day" id="optionGroup">
+                                        
+                                    </optgroup>
+                                </select>
+                            </div>
                         <!--<div
                             class="form-group"><label>Complied On</label>
                             <div class="wrapper">
@@ -264,6 +275,38 @@ if(isset($_POST['submit'])){
     <section>
         <div></div>
         <div class="row">
+            <div class="col-lg-8">
+                <div style="margin:46px;">
+                    <h1 style="font-size: 26px;">Calendar</h1>
+                    <a onclick="toggle_visibility()">Show/Hide Tasks</a>
+                    <div class="container-fluid" id="taskDetails">
+                        <br>
+  <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner row w-100 mx-0">
+        <div class="carousel-item col-sm-12 active">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Welcome to your calendar</h4>
+            <p class="card-text">All the tasks that are due along with their subtasks will be shown here. The tasks will cycle through automatically, or you may use the arrows on the left and right sides of the card to view the next/previous task</p>
+          </div>
+        </div>
+      </div>
+        <?php ParticularsAdmin::getMainTasks();?>
+    </div>
+                      
+    <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+</div>
+                        
+                </div>
+            </div>
             <div class="col-lg-8">
                 <div style="margin:46px;">
                     <h1 style="font-size: 26px;">Tasks To Do</h1>
@@ -377,7 +420,6 @@ if(isset($_POST['submit'])){
                                     }
                                     
                                     ?>
-                                    
                                      
                                     
                                 </div>
@@ -475,8 +517,99 @@ if(isset($_POST['submit'])){
                 count = 0;    
             }
         }
-
     </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+  $("#myCarousel").on("slide.bs.carousel", function(e) {
+    var $e = $(e.relatedTarget);
+    var idx = $e.index();
+    var itemsPerSlide = 3;
+    var totalItems = $(".carousel-item").length;
+
+    if (idx >= totalItems - (itemsPerSlide - 1)) {
+      var it = itemsPerSlide - (totalItems - idx);
+      for (var i = 0; i < it; i++) {
+        // append slides to end
+        if (e.direction == "left") {
+          $(".carousel-item")
+            .eq(i)
+            .appendTo(".carousel-inner");
+        } else {
+          $(".carousel-item")
+            .eq(0)
+            .appendTo($(this).find(".carousel-inner"));
+        }
+      }
+    }
+  });
+});
+
+</script>
+
+<script type="text/javascript">
+function toggle_visibility() {
+  var x = document.getElementById("taskDetails");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
+
+<script type="text/javascript">
+    
+       function dueDate(){
+            let currentDate = new Date().getYear();//.substring(1);
+            let months = document.getElementById("dueIn").selectedIndex;
+            let selectedMonth = document.getElementById("dueIn").options[months].value;
+            
+            let years = document.getElementById("fy").selectedIndex;
+            let fiscalYear = document.getElementById("fy").options[years].value;
+            
+            let period = document.getElementById("period").selectedIndex;
+            let periodicity = document.getElementById("period").options[period].value;
+            let month;    
+
+            let rangeYears = fiscalYear.split("-");
+            
+            let startYear = (1 * rangeYears[0].substr(2) )+ 100;
+            let endYear = 100 + (rangeYears[1] * 1); 
+            let timePast = false;
+            if (startYear < currentDate && (endYear === currentDate || endYear < currentDate)){
+                timePast = true;
+            }
+            switch(selectedMonth.toUpperCase()){
+                case "JANUARY" : month = 1;break; 
+                case "FEBRUARY"  : month = 2;break;
+                case "MARCH"  : month = 3;break;
+                case "APRIL"  : month = 4;break;
+                case "MAY"  : month = 5;break;
+                case "JUNE"  : month = 6;break;
+                case "JULY"  : month = 7;break;
+                case "AUGUST"  : month = 8;break;
+                case "SEPTEMBER"  : month = 9;break;
+                case "OCTOBER"  : month = 10;break;
+                case "NOVEMBER"  : month = 11;break;
+                case "DECEMBER"  : month = 12;break;
+                default : month = -1;
+            }      
+           let displayField = document.getElementById("dueDayDiv");
+           let count;
+            if (month > 0){
+                count = new Date(startYear, month, 0).getDate();
+                let options = document.getElementById("optionGroup");
+                options.innerText = "";
+                for (let i = 1; i <= count; i++){
+                    let optionEl = document.createElement("option");
+                    optionEl.value = i;
+                    optionEl.innerText = i;
+                    options.appendChild(optionEl);
+                }
+                displayField.style.display = 'block';
+            }
+        }
+</script>
 </body>
 
 </html>

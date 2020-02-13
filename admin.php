@@ -109,8 +109,10 @@ if(isset($_POST['submitParticulars'])){
     $id = 0;
     $particularsVal = $_POST['particularsVal'];
     $deptID = $_POST['partDeptID'];
+    $taskType = $_POST['taskType'];
+    $linkedTo = $_POST['taskLink'];
     
-    ParticularsAdmin::addParticularsVal($id, $particularsVal, $deptID);
+    ParticularsAdmin::addParticularsVal($id, $particularsVal, $deptID, $taskType, $linkedTo);
 }
 
 if(isset($_POST['submitDelParticulars'])){
@@ -627,6 +629,19 @@ if(isset($_POST['submitNewAdmin'])){
                                                         </div>
                                                         <form action="admin.php" class="p-4" method="post">
                                                             <div class="form-group"><input class="form-control" type="text" name="particularsVal" placeholder="Particulars value" id="particularsVal"></div>
+                                                            <div class="form-group"><label for="taskType">Task Level / Type:</label>
+                                                              <select class="form-control" id="taskType" name="taskType">
+                                                                <option value="0" selected>Select Task Type</option>
+                                                                <option value="1">Main / Header Task</option>
+                                                                <option value="2">Sub Task</option>
+                                                              </select></div>
+                                                            <div class="form-group" id="taskLinkSel"><label for="taskLink">Link To Parent Task</label>
+                                                              <select class="form-control" id="taskLink" name="taskLink">
+                                                                   <optgroup label="Select the main task">
+                                                                        <option value="0" selected>Select Parent Task</option>
+                                                                        <?php GenerateUnivFormFields::taskLinkFields();?>
+                                                                  </optgroup>
+                                                              </select></div>
                                                             <div class="form-group"><input class="form-control" type="text" name="partDeptID" id="partDeptID" placeholder="Department ID"></div>
                                                             <div class="form-group"><button name="submitParticulars" id="submitParticulars" class="btn btn-dark btn-block" type="submit">Submit</button></div>
                                                         </form>
@@ -1092,6 +1107,24 @@ if(isset($_POST['submitNewAdmin'])){
     <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
     <script src="assets/js/script.min.js"></script>
+<script>
+
+    $(document).ready(function() {
+  $.viewMap = {
+    '0' : $([]),
+    '1' : $([]),
+    '2' : $('#taskLinkSel'),
+  };
+
+  $('#taskType').change(function() {
+    // hide all
+    $.each($.viewMap, function() { this.hide(); });
+    // show current
+    $.viewMap[$(this).val()].show();
+  });
+});
+
+</script>
 </body>
 
 </html>

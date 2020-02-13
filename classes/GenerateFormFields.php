@@ -237,4 +237,25 @@
         }
     }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class GenerateUnivFormFields{
+            
+        public static function taskLinkFields(){
+            
+            $deptID = 1;
+            $userID = Login::isLoggedIn();
+            $taskType = 1;
+
+            $mainTasks = DB::query('SELECT id, task, deptID FROM task_details WHERE deptID = :deptID AND taskType = :taskType ORDER BY id DESC;', array(':deptID'=> $deptID, ':taskType'=> $taskType));
+            
+              foreach($mainTasks as $main) {
+            
+                echo "<option value='".$main['task']."'>".$main['task']."</option>";
+        }
+            
+        }
+            
+}
+
 ?>
