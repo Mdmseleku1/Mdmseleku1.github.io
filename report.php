@@ -33,6 +33,17 @@ if (Login::isLoggedIn()) {
                         } 
                     }
 
+if(isset($_POST['send'])){
+    
+    $subject = $_POST['subject'];
+    $body = $_POST['message'];
+    $address = $_POST['emailTo'];
+    $cc = $_POST['emailCC'];
+    $bcc = $_POST['emailBCC'];
+    
+    Mail::sendMail($subject, $body, $address, $cc, $bcc);
+}
+
 ?>
 
 
@@ -115,7 +126,39 @@ if (Login::isLoggedIn()) {
                 <div class="col-lg-1">
                     <div><button onclick="printRep()" class="btn btn-dark" type="button">Print</button></div>
                 </div>
-                <div class="col-lg-3"><button class="btn btn-primary" type="button" style="background-color: #eb192e;">Email</button></div>
+                <div class="col-lg-3"><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#emailModal" style="background-color: #eb192e;">Email</button>
+                
+                                            <div class="modal fade" role="dialog" tabindex="-1" id="emailModal">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title text-center text-dark text-primary" style="color: #000000;">Email Your Report</h3><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col padMar margenesCajas">
+                                                <p class="text-secondary p-0 m-0 p-2">Please enter the details below to send the report as an email to a person of your choosing</p>
+                                            </div>
+                                        </div>
+                                        <form method="post" action="report.php">
+                                        
+                                        <div class="input_fields_wrap">
+                                            <button class="add_field_button btn btn-dark btn-sm">Add More Emails</button>
+                                            <div class="form-group"><br><input class="form-control form-control-user" type="email" id="emailTo" aria-describedby="emailHelp" placeholder="Email Address To Send To" name="mytext[]" required></div></div>
+                                        <div class="input_fields_wrap2">
+                                        <button class="add_field_button2 btn btn-dark btn-sm">Add More Emails To CC</button>
+                                        <div class="form-group"><br><input class="form-control form-control-user" type="email" id="emailCC" placeholder="Email Address To CC" name="mytext2[]"></div></div>
+                                        <div class="input_fields_wrap3">
+                                            <button class="add_field_button3 btn btn-dark btn-sm">Add More Emails To BCC</button>
+                                            <div class="form-group"><br><input class="form-control form-control-user" type="email" id="emailBCC" placeholder="Email Address To BCC" name="mytext3[]"></div></div>
+                                        <div class="form-group"><input class="form-control form-control-user" type="text" id="subject" placeholder="Subject" name="subject"></div>
+                                        <div class="form-group"><input class="form-control form-control-user" type="text" id="message" placeholder="Message" name="message"></div>
+                                        <button class="btn btn-light btn-block text-light btn-user" type="submit" name="send" id="send" style="background-color: #3c3d41;font-size: 16px;color: #ffffff;">Send</button></form>
+                </div>
+            </div>
+        </div>
+    </div>
+                
+                </div>
             </div><?php if($isAdmin == "1"){echo '<div class="row">
             <div class="container">
                 <form action="report.php" method="post">
@@ -240,6 +283,69 @@ if (Login::isLoggedIn()) {
       });
     });
   </script>
+    
+    <script type="text/javascript">
+    $(document).ready(function() {
+	var max_fields      = 5; //maximum input boxes allowed
+	var wrapper   		= $(".input_fields_wrap"); //Fields wrapper
+	var add_button      = $(".add_field_button"); //Add button ID
+	
+	var x = 1; //initlal text box count
+	$(add_button).click(function(e){ //on add input button click
+		e.preventDefault();
+		if(x < max_fields){ //max input box allowed
+			x++; //text box increment
+			$(wrapper).append('<div><input class="form-control form-control-user" type="text" name="mytext[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+		}
+	});
+	
+	$(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+		e.preventDefault(); $(this).parent('div').remove(); x--;
+	})
+});
+    </script>
+    
+    <script type="text/javascript">
+    $(document).ready(function() {
+	var max_fields      = 5; //maximum input boxes allowed
+	var wrapper   		= $(".input_fields_wrap2"); //Fields wrapper
+	var add_button      = $(".add_field_button2"); //Add button ID
+	
+	var x = 1; //initlal text box count
+	$(add_button).click(function(e){ //on add input button click
+		e.preventDefault();
+		if(x < max_fields){ //max input box allowed
+			x++; //text box increment
+			$(wrapper).append('<div><input class="form-control form-control-user" type="text" name="mytext2[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+		}
+	});
+	
+	$(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+		e.preventDefault(); $(this).parent('div').remove(); x--;
+	})
+});
+    </script>
+    
+    <script type="text/javascript">
+    $(document).ready(function() {
+	var max_fields      = 5; //maximum input boxes allowed
+	var wrapper   		= $(".input_fields_wrap3"); //Fields wrapper
+	var add_button      = $(".add_field_button3"); //Add button ID
+	
+	var x = 1; //initlal text box count
+	$(add_button).click(function(e){ //on add input button click
+		e.preventDefault();
+		if(x < max_fields){ //max input box allowed
+			x++; //text box increment
+			$(wrapper).append('<div><input class="form-control form-control-user" type="text" name="mytext3[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+		}
+	});
+	
+	$(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+		e.preventDefault(); $(this).parent('div').remove(); x--;
+	})
+});
+    </script>
 </body>
 
 </html>

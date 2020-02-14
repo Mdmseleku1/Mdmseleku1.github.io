@@ -152,13 +152,13 @@ class EntityAdmin{
 
 class ParticularsAdmin{
     
-     public static function addParticularsVal($id, $particularsVal, $deptID, $taskType, $linkedTo){
+     public static function addParticularsVal($id, $particularsVal, $deptID, $taskType, $linkedTo, $dueMonth, $dueYear, $dueDay){
            
         $errors = array();
         
         if(!DB::query('SELECT task FROM task_details WHERE task = :task', array(':task'=> $particularsVal))){
             
-        DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo));
+        DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo, :dueMonth, :dueYear, :dueDay)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo, ':dueMonth'=>$dueMonth, ':dueYear'=>$dueYear, ':dueDay'=>$dueDay));
         echo 'Success';
             
         }
@@ -196,6 +196,7 @@ class ParticularsAdmin{
         
         DB::query('DELETE FROM task_details WHERE task = :task', array(':task'=>$particularsValDel));
         echo 'Success';
+                
                 }
             
             else{
@@ -217,24 +218,107 @@ class ParticularsAdmin{
             $notLinked = 0;
             $empty = '';
 
-            $mainTasks  = DB::query('SELECT id ,task FROM task_details WHERE taskType = :taskType ORDER BY id ASC LIMIT 3', array(':taskType'=>$taskType));
+            $mainTasks  = DB::query('SELECT id ,task, dueMonth, dueDay, dueYear FROM task_details WHERE taskType = :taskType ORDER BY id ASC LIMIT 5', array(':taskType'=>$taskType));
             
             foreach($mainTasks as $main){
                 
                 $subTasks = DB::query('SELECT * FROM task_details WHERE linkedTo != :notLinkedTo AND linkedTo != :empty AND linkedTo = :linkedToName', array(':notLinkedTo'=>$notLinked, ':empty'=>$empty, ':linkedToName'=>$main['task']));
                 
+                $dateTime1 = strtotime($main['dueMonth']);
+                $dateTime2 = date("m");
+                $dateStringCompare = date("F", mktime(0, 0, 0, $dateTime2, 10));
+                $dateTimeCompare = strtotime($dateStringCompare);
                 
-                echo '
+                $dueMonth = $main['dueMonth'];
+                $dueMonthString = '';
+                
+                    switch($dueMonth){
+        case '01':{
+            $dueMonthString = 'January';
+            break;
+        }
+        case '02':{
+            $dueMonthString = 'February';
+            break;
+        }
+        case '03':{
+            $dueMonthString = 'March';
+            break;
+        }
+        case '04':{
+            $dueMonthString = 'April';
+            break;
+        }
+        case '05':{
+            $dueMonthString = 'May';
+            break;
+        }
+        case '06':{
+            $dueMonthString = 'June';
+            break;
+        }
+        case '07':{
+            $dueMonthString = 'July';
+            break;
+        }
+        case '08':{
+            $dueMonthString = 'August';
+            break;
+        }
+        case '09':{
+            $dueMonthString = 'September';
+            break;
+        }
+        case '10':{
+            $dueMonthString = 'October';
+            break;
+        }
+        case '11':{
+            $dueMonthString = 'November';
+            break;
+        }
+        case '12':{
+            $dueMonth = 'December';
+            break;
+            }
+    }
+                
+                $dayComp = $main['dueDay'] - date('d'); 
+                $monthComp = $main['dueMonth'] - date('m');
+                $yearComp = $main['dueYear'] - date('Y');
+                
+                $dueDate = $main['dueYear'].'0'.$dueMonth.$main['dueDay'];
+                $today = date('Ymd');
+
+                if($dueDate > $today){
+                      echo '
                             <div class="carousel-item col-sm-10">
                             <div class="card">
                               <div class="card-body">
-                                <h4 class="card-title">'.$main['task'].'</h4>
+                                <h4 class="card-title">'.$main['task'].'</h4><small class="text-muted">Parent task and all subtasks due by: '.$main['dueDay'].' '.$dueMonthString.'</small><hr>
                                 ';
                 
                 foreach($subTasks as $task){
                     echo '
                           <p class="card-text">'.$task['task'].'.</p>
-                          <p class="card-text"><small class="text-muted">Task is due: </small></p>
+                          <p class="card-text"><small class="text-muted">Task is due: '.$task['dueDay'].' '.$task['dueMonth'].' '.$task['dueYear'].'</small></p>
+                          
+                          <div class="container mb-3">
+                            <section id="timer">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 countdown-wrapper">
+                                        <div class="well">
+                                            <div id="countdown">
+                                                <span id="months" class="timer bg-success">'.$monthComp.'</span>
+                                                <span id="days" class="timer bg-warning">'.$dayComp.'</span>
+                                                <span id="years" class="timer bg-info">'.$yearComp.'</span>
+                                                <span id="mins" class="timer bg-primary"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                          </div>
                     ';
                 }
                 
@@ -244,6 +328,7 @@ class ParticularsAdmin{
                               
                       
             }
+                }
             
         }
 }

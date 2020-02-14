@@ -309,7 +309,7 @@ if(isset($_POST['submit'])){
             </div>
             <div class="col-lg-8">
                 <div style="margin:46px;">
-                    <h1 style="font-size: 26px;">Tasks To Do</h1>
+                    <h1 style="font-size: 26px;">General Compliance Tasks To Do</h1>
                     <div class="row row-striped">
 			<div class="col-2 text-center">
 				<h1 class="display-4 "><span class="badge date-green"></span></h1>
@@ -558,6 +558,32 @@ function toggle_visibility() {
 </script>
 
 <script type="text/javascript">
+    
+     //TIMER JS
+    $( document ).ready(function() {
+        setInterval(function time(){
+        var d = new Date();
+        var months = d.getMonth();
+        var years = d.getYear();
+        var days = d.getDay();
+        var hours = 24 - d.getHours();
+        var mins = 60 - d.getMinutes();
+        if((months + '').length == 1){
+            months = '0' + months;
+        }
+        if((hours + '').length == 1){
+            hours = '0' + hours;
+        }
+        var sec = 60 - d.getSeconds();
+        if((mins + '').length == 1){
+            mins = '0' + mins;
+        }
+        jQuery('#countdown #months').html(months);
+        jQuery('#countdown #days').html(days);
+        jQuery('#countdown #hours').html(hours);
+        jQuery('#countdown #years').html(years);
+        }, 1000); 
+    });
     
        function dueDate(){
             let currentDate = new Date().getYear();//.substring(1);

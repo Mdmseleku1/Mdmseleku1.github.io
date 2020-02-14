@@ -54,6 +54,7 @@ if (Login::isLoggedIn()) {
                                                 DB::query('UPDATE users SET password = :newPassword WHERE empID = :userID', array(':newPassword'=>password_hash($newPassword, PASSWORD_BCRYPT), ':userID'=>$userID));
                                                 echo 'Password changed successfully!';
                                                 DB::query('DELETE FROM password_tokens WHERE empID = :userID', array(':userID'=>$userID));
+                                                
                                             
                                             header('Location: login.php');
                                         }

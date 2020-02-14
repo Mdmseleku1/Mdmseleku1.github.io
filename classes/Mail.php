@@ -1,7 +1,7 @@
 <?php
 require_once('PHPMailer/PHPMailerAutoload.php');
 class Mail {
-        public static function sendMail($subject, $body, $address) {
+        public static function sendMail($subject, $body, $address, $cc ,$bcc) {
                 $mail = new PHPMailer();
                 $mail->isSMTP();
                 $mail->SMTPAuth = true;
@@ -15,6 +15,8 @@ class Mail {
                 $mail->Subject = $subject;
                 $mail->Body = $body;
                 $mail->AddAddress($address);
+                $mail->AddCC($cc);
+                $mail->AddBCC($bcc);
 
                 $mail->Send();
         }
