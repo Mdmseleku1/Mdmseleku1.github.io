@@ -9,7 +9,13 @@ include('./classes/Notifications.php');
 
 if (Login::isLoggedIn()) {
         $userid = Login::isLoggedIn();
+        if(DB::query('SELECT isAdmin FROM users WHERE empID = :empID', array(':empID'=> $userid))){
         $isAdmin = DB::query('SELECT isAdmin FROM users WHERE empID = :empID', array(':empID'=> $userid))[0]['isAdmin'];
+        }
+        
+    else{
+        $isAdmin = 0;
+    }
 } else {
         header('Location: login.php');
 }
@@ -179,8 +185,62 @@ if(isset($_POST['submitEditParticulars'])){
     
     $particularsOldVal = $_POST['particularsValEdit'];
     $particularsNewVal = $_POST['particularsValEditNew'];
+    $dueMonth = $_POST['mthParticulars2'];
+    $dueYear = $_POST['yrParticulars2'];
+    $dueDay = $_POST['dayParticulars2'];
     
-    ParticularsAdmin::editParticularsVal($particularsOldVal, $particularsNewVal);
+    switch($dueMonth){
+        case 'January':{
+            $dueMonth = '01';
+            break;
+        }
+        case 'February':{
+            $dueMonth = '02';
+            break;
+        }
+        case 'March':{
+            $dueMonth = '03';
+            break;
+        }
+        case 'April':{
+            $dueMonth = '04';
+            break;
+        }
+        case 'May':{
+            $dueMonth = '05';
+            break;
+        }
+        case 'June':{
+            $dueMonth = '06';
+            break;
+        }
+        case 'July':{
+            $dueMonth = '07';
+            break;
+        }
+        case 'August':{
+            $dueMonth = '08';
+            break;
+        }
+        case 'September':{
+            $dueMonth = '09';
+            break;
+        }
+        case 'October':{
+            $dueMonth = '10';
+            break;
+        }
+        case 'November':{
+            $dueMonth = '11';
+            break;
+        }
+        case 'December':{
+            $dueMonth = '12';
+            break;
+            }
+    }
+    
+    ParticularsAdmin::editParticularsVal($particularsOldVal, $particularsNewVal, $dueMonth, $dueYear, $dueDay);
     }
 
 
@@ -340,7 +400,7 @@ if(isset($_POST['submitNewAdmin'])){
                     <li class="nav-item" role="presentation"><a class="nav-link" href="index.php" style="color: rgba(0,0,0,0.8);"><i class="fas fa-tachometer-alt" style="color: #000000;"></i><span>Dashboard</span></a></li>
                     <li class="nav-item" role="presentation"><a class="nav-link" href="activityLog.php"><i class="fas fa-book" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Activity Log</span></a></li>
                     <?php if($isAdmin == 1){ echo '<li class="nav-item" role="presentation"><a class="nav-link active" href="admin.php"><i class="fas fa-users-cog" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Admin</span></a></li>'; }?>
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="login.php"><i class="fas fa-door-open" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Logout</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="logout.php"><i class="fas fa-door-open" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Logout</span></a></li>
                     <li class="nav-item" role="presentation"></li>
                     <li class="nav-item" role="presentation"></li>
                 </ul>
@@ -758,6 +818,45 @@ if(isset($_POST['submitNewAdmin'])){
                                                         <form action="admin.php" class="p-4" method="post">
                                                             <div class="form-group"><input class="form-control" type="text" name="particularsValEdit" placeholder="Particulars value To Edit" id="particularsValEdit"></div>
                                                             <div class="form-group"><input class="form-control" type="text" name="particularsValEditNew" placeholder="New Particulars Value" id="particularsValEditNew"></div>
+                                                            <div class="form-group">
+                                                                <label>New Due Year</label>
+                                                                <input type="text" name="yrParticulars2" 
+                                                                onchange="getParticularsDate2();" 
+                                                                        id="yrParticulars2" class="form-control" placeholder="Enter new year or leave blank to leave unchanged ">
+                                                            </div>
+                                                            <!-- MONTH FIELD -->
+                                                            <div class="form-group" onchange="getParticularsDate2();">
+                                                                <label>New Due Month</label>
+                                                                <select id="mthParticulars2" name="mthParticulars2" class="form-control">
+                                                                    <optgroup label="Due In Month"  placeholder="Choose month">
+                                                                        <option value="" selected>Select to leave unchanged</option>
+                                                                        <option value="January">January</option>
+                                                                        <option value="February">February</option>
+                                                                        <option value="March">March</option>
+                                                                        <option value="April">April</option>
+                                                                        <option value="May">May</option>
+                                                                        <option value="June">June</option>
+                                                                        <option value="July">July</option>
+                                                                        <option value="August">August</option>
+                                                                        <option value="September">September</option>
+                                                                        <option value="October">October</option>
+                                                                        <option value="November">November</option>
+                                                                        <option value="December">December</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div>
+                                                            <!-- DAY FIELD-->
+                                                            <div    class="form-group row ml-1" 
+                                                                    style="display: none;" id="dueDayDiv2">
+                                                                    <label for="dueDay" class="col-sm-3col-form-label">
+                                                                        New Due Day: Select '0' to leave unchanged
+                                                                    </label>
+                                                                    <select id="dayParticulars2" name="dayParticulars2">
+                                                                        <optgroup label="Due In Day" id="optionGroup2">
+                                                                            
+                                                                        </optgroup>
+                                                                    </select>
+                                                            </div>
                                                             <div class="form-group"><button name="submitEditParticulars" id="submitEditParticulars" class="btn btn-dark btn-block" type="submit">Submit</button></div>
                                                         </form>
                                                     </div>
@@ -1249,6 +1348,44 @@ if(isset($_POST['submitNewAdmin'])){
                 let options = document.getElementById("optionGroup");
                 options.innerText = "";
                 for (let i = 1; i <= count; i++){
+                    let optionEl = document.createElement("option");
+                    optionEl.value = i;
+                    optionEl.innerText = i;
+                    options.appendChild(optionEl);
+                }
+                displayField.style.display = 'block';
+            }
+        }
+    
+    function getParticularsDate2(){
+            let year = document.getElementById("yrParticulars2").value;
+            year = year.substr(2);
+            year = (1 * year) + 100;
+
+            let month = document.getElementById("mthParticulars2").value;
+
+            switch(month.toUpperCase()){
+                case "JANUARY" : month = 1;break; 
+                case "FEBRUARY"  : month = 2;break;
+                case "MARCH"  : month = 3;break;
+                case "APRIL"  : month = 4;break;
+                case "MAY"  : month = 5;break;
+                case "JUNE"  : month = 6;break;
+                case "JULY"  : month = 7;break;
+                case "AUGUST"  : month = 8;break;
+                case "SEPTEMBER"  : month = 9;break;
+                case "OCTOBER"  : month = 10;break;
+                case "NOVEMBER"  : month = 11;break;
+                case "DECEMBER"  : month = 12;break;
+                default : month = -1;
+            }      
+            let displayField = document.getElementById("dueDayDiv2");
+            let count;
+            if (month > 0){
+                count = new Date(year, month, 0).getDate();
+                let options = document.getElementById("optionGroup2");
+                options.innerText = "";
+                for (let i = 0; i <= count; i++){
                     let optionEl = document.createElement("option");
                     optionEl.value = i;
                     optionEl.innerText = i;

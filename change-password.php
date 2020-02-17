@@ -9,6 +9,29 @@ if (Login::isLoggedIn()) {
 
         if (isset($_POST['changePassword'])) {
             
+            
+    $url = "https://www.google.com/recaptcha/api/siteverify";
+    $data = [
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
+			'response' => $_POST['token'],
+			'remoteip' => $_SERVER['REMOTE_ADDR']
+		];
+
+		$options = array(
+		    'http' => array(
+		      'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		      'method'  => 'POST',
+		      'content' => http_build_query($data)
+		    )
+		  );
+
+		$context  = stream_context_create($options);
+  		$response = file_get_contents($url, false, $context);
+
+		$res = json_decode($response, true);
+		if($res['success'] == true) {
+    
+            
                 $oldPassword = $_POST['oldPassword'];
                 $newPassword = $_POST['newPassword'];
                 $newPasswordRepeat = $_POST['newPasswordRepeat'];
@@ -34,6 +57,7 @@ if (Login::isLoggedIn()) {
                         echo 'Incorrect old password!';
                 }
 
+            }
         }
 
 } else {
@@ -43,6 +67,29 @@ if (Login::isLoggedIn()) {
                 $userID = DB::query('SELECT empID FROM password_tokens WHERE token = :token', array(':token'=>sha1($token)))[0]['empID'];
                 $tokenIsValid = True;
                 if (isset($_POST['changePassword'])) {
+                    
+                    
+    $url = "https://www.google.com/recaptcha/api/siteverify";
+    $data = [
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
+			'response' => $_POST['token'],
+			'remoteip' => $_SERVER['REMOTE_ADDR']
+		];
+
+		$options = array(
+		    'http' => array(
+		      'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		      'method'  => 'POST',
+		      'content' => http_build_query($data)
+		    )
+		  );
+
+		$context  = stream_context_create($options);
+  		$response = file_get_contents($url, false, $context);
+
+		$res = json_decode($response, true);
+		if($res['success'] == true) {
+    
 
                         $newPassword = $_POST['newPassword'];
                         $newPasswordRepeat = $_POST['newPasswordRepeat'];
@@ -62,6 +109,7 @@ if (Login::isLoggedIn()) {
                                 } else {
                                         echo 'Passwords don\'t match!';
                                 }
+                    }
                 }
 
 
@@ -92,6 +140,7 @@ if (Login::isLoggedIn()) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg"></script>
 </head>
 
 <body class="bg-gradient-primary" style="background-color: #092c6e;background-image: url(&quot;none&quot;);">
@@ -121,6 +170,7 @@ if (Login::isLoggedIn()) {
                                         <?php if(Login::isLoggedIn()){echo '<div class="form-group"><input class="form-control form-control-user" type="password" id="oldPassword" aria-describedby="emailHelp" placeholder="Old Password" name="oldPassword"></div>';}?>
                                         <div class="form-group"><input class="form-control form-control-user" type="password" id="newPassword" aria-describedby="emailHelp" placeholder="New Password" name="newPassword"></div>
                                         <div class="form-group"><input class="form-control form-control-user" type="password" id="newPasswordRepeat" placeholder="Repeat New Password" name="newPasswordRepeat"></div>
+                                        <input type="hidden" id="token" name="token">
                                         <div class="form-group">
                                         </div><button class="btn btn-light btn-block text-light btn-user" type="submit" name="changePassword" id="changePassword" style="background-color: #3c3d41;font-size: 16px;color: #ffffff;">Reset Password</button></form><br>
                                     <div
@@ -140,6 +190,14 @@ if (Login::isLoggedIn()) {
     <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
     <script src="assets/js/script.min.js"></script>
+    <script>
+          grecaptcha.ready(function() {
+              grecaptcha.execute('6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg', {action: 'homepage'}).then(function(token) {
+                 // console.log(token);
+                 document.getElementById("token").value = token;
+              });
+          });
+    </script>
 </body>
 
 </html>

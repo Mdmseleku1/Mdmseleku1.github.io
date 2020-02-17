@@ -5,6 +5,28 @@ include('./classes/Login.php');
 $errors = array();
 
 if (isset($_POST['resetpassword'])) {
+    
+        $url = "https://www.google.com/recaptcha/api/siteverify";
+        $data = [
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
+			'response' => $_POST['token'],
+			'remoteip' => $_SERVER['REMOTE_ADDR']
+		];
+
+		$options = array(
+		    'http' => array(
+		      'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		      'method'  => 'POST',
+		      'content' => http_build_query($data)
+		    )
+		  );
+
+		$context  = stream_context_create($options);
+  		$response = file_get_contents($url, false, $context);
+
+		$res = json_decode($response, true);
+		if($res['success'] == true) {
+    
         include('./classes/Mail.php');
     
         $email = $_POST['email'];
@@ -33,6 +55,7 @@ if (isset($_POST['resetpassword'])) {
         $err = "No such user in our records";
         array_push($errors, $err);
     }
+        }
 }
 
 if(Login::isLoggedIn()){
@@ -56,6 +79,7 @@ if(Login::isLoggedIn()){
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg"></script>
 </head>
 
 <body class="bg-gradient-primary" style="background-color: #092c6e;background-image: url(&quot;none&quot;);">
@@ -83,6 +107,7 @@ if(Login::isLoggedIn()){
                                         
                                     
                                     <form class="user" method="post" action="forgot-password.php">
+                                        <input type="hidden" id="token" name="token">
                                         <div class="form-group"><input class="form-control form-control-user" type="email" id="email" aria-describedby="emailHelp" placeholder="Enter Email Address..." name="email"></div><button class="btn btn-primary btn-block text-white btn-user"
                                             type="submit" name="resetpassword" id="resetpassword" style="background-color: #092c6e;">Reset Password</button></form><br>
                                     <div class="text-center"><a class="small" href="login.php">Click Here By Accident? Use This To Go Back To Login</a></div>
@@ -101,6 +126,14 @@ if(Login::isLoggedIn()){
     <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
     <script src="assets/js/script.min.js"></script>
+     <script>
+          grecaptcha.ready(function() {
+              grecaptcha.execute('6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg', {action: 'homepage'}).then(function(token) {
+                 // console.log(token);
+                 document.getElementById("token").value = token;
+              });
+          });
+    </script>
 </body>
 
 </html>

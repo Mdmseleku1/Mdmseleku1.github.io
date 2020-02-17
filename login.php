@@ -11,6 +11,27 @@ if(Login::isLoggedIn()){
 
 if (isset($_POST['login'])) {
     
+    $url = "https://www.google.com/recaptcha/api/siteverify";
+    $data = [
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
+			'response' => $_POST['token'],
+			'remoteip' => $_SERVER['REMOTE_ADDR']
+		];
+
+		$options = array(
+		    'http' => array(
+		      'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		      'method'  => 'POST',
+		      'content' => http_build_query($data)
+		    )
+		  );
+
+		$context  = stream_context_create($options);
+  		$response = file_get_contents($url, false, $context);
+
+		$res = json_decode($response, true);
+		if($res['success'] == true) {
+    
         $empID = $_POST['empID'];
         $password = $_POST['password'];
         $id = 0;
@@ -45,6 +66,7 @@ if (isset($_POST['login'])) {
                 array_push($errors, $err);
         }
     }
+        }
 
 }
 
@@ -66,6 +88,7 @@ if (isset($_POST['login'])) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg"></script>
 </head>
 
 <body class="bg-gradient-primary" style="background-color: #092c6e;background-image: url(&quot;none&quot;);">
@@ -98,7 +121,9 @@ if (isset($_POST['login'])) {
                                             <div class="custom-control custom-checkbox small">
                                                 <div class="form-check"><input class="form-check-input custom-control-input" type="checkbox" id="remember"><label class="form-check-label text-dark custom-control-label" for="remember">Remember Me</label></div>
                                             </div>
-                                        </div><button class="btn btn-light btn-block text-light btn-user" type="submit" name="login" id="login" style="background-color: #3c3d41;font-size: 16px;color: #ffffff;">Login</button></form><br>
+                                        </div>
+                                        <input type="hidden" id="token" name="token">
+                                        <button class="btn btn-light btn-block text-light btn-user" type="submit" name="login" id="login" style="background-color: #3c3d41;font-size: 16px;color: #ffffff;">Login</button></form><br>
                                     <div
                                         class="text-center"><a class="text-dark small" href="forgot-password.php">Forgot Password? Click Here To Reset It</a></div>
                             </div>
@@ -117,6 +142,14 @@ if (isset($_POST['login'])) {
     <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
     <script src="assets/js/script.min.js"></script>
+    <script>
+          grecaptcha.ready(function() {
+              grecaptcha.execute('6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg', {action: 'homepage'}).then(function(token) {
+                 // console.log(token);
+                 document.getElementById("token").value = token;
+              });
+          });
+    </script>
 </body>
 
 </html>

@@ -22,14 +22,14 @@ class GenerateMainReport{
 
             if($dateTime1 > $dateTimeCompare){
                 $class = "alert-success";
-                $status = "Compliend";
+                $status = "Complied";
                 $earlyTasks++;
             }
 
             else if($dateTime1 < $dateTimeCompare){
                 $class = "alert-danger";
                 $lateTasks++;
-                  $status = "Non-Complied";
+                  $status = "Not-Complied";
             }
 
             else{

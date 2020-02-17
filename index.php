@@ -18,8 +18,30 @@ if (Login::isLoggedIn()) {
 
 if(isset($_POST['submit'])){
     
+    $url = "https://www.google.com/recaptcha/api/siteverify";
+    $data = [
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
+			'response' => $_POST['token'],
+			'remoteip' => $_SERVER['REMOTE_ADDR']
+		];
+
+		$options = array(
+		    'http' => array(
+		      'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		      'method'  => 'POST',
+		      'content' => http_build_query($data)
+		    )
+		  );
+
+		$context  = stream_context_create($options);
+  		$response = file_get_contents($url, false, $context);
+
+		$res = json_decode($response, true);
+		if($res['success'] == true) {
+    
+    
     $sNo = 0;
-    $country = "South Africa";
+    $country = $_POST['country'];
     $itemName = $_POST['item'];
     $entity = $_POST['ent'];
     $fy = $_POST['fy'];
@@ -31,8 +53,11 @@ if(isset($_POST['submit'])){
     $userid = Login::isLoggedIn();
     $compliedOnMon = date("m");
     $dueDay = $_POST['dueDay'];
+    $status = 1;
     
     DB::query('INSERT INTO tax VALUES(:sNo, :description, :country, :ou, :entity, :period, :fy, :dueFor, :dueIn, :empID, :compliedOn, :compliedOnMon, :day)', array(':sNo'=>$sNo, ':description'=> $itemName, ':country'=>$country, ':ou'=>$ou, ':entity'=>$entity, ':period'=> $period, ':fy'=>$fy, ':dueFor'=>$dueFor, ':dueIn'=>$dueIn, ':empID'=> $userid, ':compliedOn'=> $compliedOn, ':compliedOnMon'=>$compliedOnMon,':day'=>$dueDay));
+    
+    DB::query('UPDATE task_details SET status = :status WHERE task = :task', array(':status'=>$status, ':task'=>$itemName));
     
     echo 'Success';
     
@@ -43,6 +68,7 @@ if(isset($_POST['submit'])){
     
     header('Location: report.php');
     
+        }
 }
 
  if(isset($_POST['submitView'])){
@@ -108,6 +134,8 @@ if(isset($_POST['submit'])){
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg"></script>
         
     <!-- SELECT CSS TO IMPLEMENT SEARCH WITH OPTIONS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
@@ -227,7 +255,8 @@ if(isset($_POST['submit'])){
                                             </div>
                                         </div>
                                         <form class="p-4" method="post" action="index.php">
-                                            <div class="form-group"><label>Tax Compliance Item</label><select id="item" name="item" class="form-control"><optgroup label="Select the main task"><?php GenerateTaxFormFields::getTaskFields(); ?></optgroup></select></div>
+                                            <div class="form-group"><label>Country</label><select id="country" name="country" class="form-control"><optgroup label="Select the country"><?php GenerateTaxFormFields::getCountryFields(); ?></optgroup></select></div>
+                                            <div class="form-group"><label>Tax Compliance Item</label><select id="item" name="item" class="form-control"><optgroup label="Select the task"><?php GenerateTaxFormFields::getTaskFields(); ?></optgroup></select></div>
                                             <div
                                                 class="form-group"><label>Entity</label><select id="ent" name="ent" class="form-control"><optgroup label="Select Entity"><?php GenerateTaxFormFields::getEntityFields(); ?></optgroup></select></div>
                                             <div
@@ -261,6 +290,7 @@ if(isset($_POST['submit'])){
                                 </div>
                             </div>
                     </div>-->
+                    <input type="hidden" id="token" name="token">
                     <div class="form-group"><button name="submit" id="submit" class="btn btn-dark btn-block" type="submit">Submit Comlpiance Item</button></div>
                     </form>
                 </div>
@@ -321,39 +351,10 @@ if(isset($_POST['submit'])){
                 <h5 id="noMonthlyTasks" class="alert alert-info" style="display: none;">No monthly due date for selected task.</h5>
 			</div>
 		</div>
-                    <div class="row row-striped">
-			<div class="col-2 text-center ">
-				<h1 class="display-4 "><span class="badge date-green"></span></h1>
-				<h2>May</h2>
-			</div>
-			<div class="col-10" id="mayTasks">
-				<h3 class="text-uppercase"><strong>Tasks Due In May</strong></h3>
-				<?php Task::getMayTasks(); ?>
-                <h5 id="noMayTasks" class="alert alert-info" style="display: none;">No May due date for the selected task.</h5>
-			</div>
-		</div><div class="row row-striped">
-			<div class="col-2 text-center">
-				<h1 class="display-4"><span class="badge date-green"></span></h1>
-				<h2>Jun</h2>
-			</div>
-			<div class="col-10" id="juneTasks">
-				<h3 class="text-uppercase"><strong>Tasks Due In June</strong></h3>
-				
-				<?php Task::getJunTasks(); ?>
-                <h5 id="noJuneTasks" class="alert alert-info" style="display: none;">No June due date for the selected task.</h5>
-			</div>
-		</div>
-                    <div class="row row-striped">
-			<div class="col-2 text-center ">
-				<h1 class="display-4 "><span class="badge date-green"></span></h1>
-				<h2>Jul</h2>
-			</div>
-			<div class="col-10" id="julyTasks">
-				<h3 class="text-uppercase"><strong>Tasks Due In July</strong></h3>
-				<?php Task::getJulTasks(); ?>
-                <h5 id="noJulyTasks" class="alert alert-info" style="display: none;">No July due date for the selected task.</h5>
-			</div>
-		</div>
+				<?php 
+                    Task::getYearlyTasks();
+                ?>
+               
                 </div>
             </div>
             <div class="col-lg-4">
@@ -478,6 +479,26 @@ if(isset($_POST['submit'])){
             let listedTasks = monthlyTasksDiv.querySelectorAll("p");
             let noMonthlyTasks = document.getElementById("noMonthlyTasks");
             let rule = monthlyTasksDiv.querySelector("hr");
+           
+            let monthlyTasksDiv = document.querySelector("#janTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noJanTasks");
+            let rule = monthlyTasksDiv.querySelector("hr");
+           
+            let monthlyTasksDiv = document.querySelector("#febTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noFebTasks");
+            let rule = monthlyTasksDiv.querySelector("hr");
+           
+           let monthlyTasksDiv = document.querySelector("#marTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noMarTasks");
+            let rule = monthlyTasksDiv.querySelector("hr");
+           
+           let monthlyTasksDiv = document.querySelector("#aprTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noAprTasks");
+            let rule = monthlyTasksDiv.querySelector("hr");
             
             let mayTaskGroup = document.getElementById("mayTasks");
             let mayTasks = mayTaskGroup.getElementsByTagName("p");
@@ -493,10 +514,35 @@ if(isset($_POST['submit'])){
             let julyTasks = julyTaskGroup.getElementsByTagName("p");
             let noJulyTasks = document.getElementById("noJulyTasks");
             let julyRule = julyTaskGroup.querySelector("hr");
+           
+           let monthlyTasksDiv = document.querySelector("#augTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noAugTasks");
+            let rule = monthlyTasksDiv.querySelector("hr");
+           
+           let monthlyTasksDiv = document.querySelector("#septTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noSeptTasks");
+            let rule = monthlyTasksDiv.querySelector("hr");
+           
+           let monthlyTasksDiv = document.querySelector("#octTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noOctTasks");
+            let rule = monthlyTasksDiv.querySelector("hr");
+           
+           let monthlyTasksDiv = document.querySelector("#novTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noNovTasks");
+            let rule = monthlyTasksDiv.querySelector("hr");
+           
+           let monthlyTasksDiv = document.querySelector("#decTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let noMonthlyTasks = document.getElementById("noDecTasks");
+            let rule = monthlyTasksDiv.querySelector("hr");
 
-            let allTasks = [listedTasks, mayTasks, juneTasks, julyTasks];
-            let noTasks = [noMonthlyTasks, noMayTasks, noJuneTasks, noJulyTasks];
-            let noHorizontalRules = [rule, mayRule, juneRule, julyRule];
+            let allTasks = [listedTasks, janTasks, febTasks, marTasks, aprTasks, mayTasks, juneTasks, julyTasks, augTasks, septTasks, octTaks, novTasks, decTasks];
+            let noTasks = [noMonthlyTasks, noJanTasks, noFebTasks, noMarTasks, noAprTasks, noMayTasks, noJuneTasks, noJulyTasks, noAugTasks, noSeptTasks, noOctTasks, noNovTasks, noDecTasks];
+            let noHorizontalRules = [rule, janRule, febRule, marRule, aprRule, mayRule, juneRule, julyRule, augRule, septRule, octRule, novRule, decRule];
             let count = 0;
             
             for (let i = 0; i < allTasks.length; i++){
@@ -636,6 +682,15 @@ function toggle_visibility() {
             }
         }
 </script>
+<script>
+          grecaptcha.ready(function() {
+              grecaptcha.execute('6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg', {action: 'homepage'}).then(function(token) {
+                 // console.log(token);
+                 document.getElementById("token").value = token;
+              });
+          });
+    </script>
+
 </body>
 
 </html>

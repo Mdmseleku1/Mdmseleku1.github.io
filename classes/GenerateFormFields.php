@@ -34,8 +34,9 @@
             
             $deptID = 1;
             $userID = Login::isLoggedIn();
+            $taskType = 2;
                 
-            $taskItems = DB::query('SELECT task, deptID FROM task_details WHERE deptID = :deptID ORDER BY task_details.id DESC;', array(':deptID'=> $deptID));
+            $taskItems = DB::query('SELECT task, deptID FROM task_details WHERE deptID = :deptID AND taskType = :taskType ORDER BY task_details.id DESC;', array(':deptID'=> $deptID, ':taskType'=>$taskType));
             
               foreach($taskItems as $task) {
             

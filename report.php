@@ -81,7 +81,7 @@ if(isset($_POST['send'])){
                 <hr class="sidebar-divider my-0">
                 <ul class="nav navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item" role="presentation"><a class="nav-link" href="index.php" style="color: rgba(0,0,0,0.8);"><i class="fas fa-tachometer-alt" style="color: #000000;"></i><span>Dashboard</span></a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="profile.html"><i class="fas fa-book" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Activity Log</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="activityLog.php"><i class="fas fa-book" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Activity Log</span></a></li>
                      <?php if($isAdmin == 1){ echo '<li class="nav-item" role="presentation"><a class="nav-link" href="admin.php"><i class="fas fa-users-cog" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Admin</span></a></li>'; }?>
                     <li class="nav-item" role="presentation"><a class="nav-link" href="logout.php"><i class="fas fa-door-open" style="color: #000000;"></i><span style="color: rgba(0,0,0,0.8);">Logout</span></a></li>
                     <li class="nav-item" role="presentation"></li>

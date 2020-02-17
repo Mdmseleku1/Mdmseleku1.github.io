@@ -155,29 +155,88 @@ class ParticularsAdmin{
      public static function addParticularsVal($id, $particularsVal, $deptID, $taskType, $linkedTo, $dueMonth, $dueYear, $dueDay){
            
         $errors = array();
+        $due = '';
+        $due2 = $dueYear.'0'.$dueMonth.$dueDay;
+        $status = 1;
         
         if(!DB::query('SELECT task FROM task_details WHERE task = :task', array(':task'=> $particularsVal))){
             
-        DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo, :dueMonth, :dueYear, :dueDay)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo, ':dueMonth'=>$dueMonth, ':dueYear'=>$dueYear, ':dueDay'=>$dueDay));
-        echo 'Success';
+            if($taskType == 2){
+                
+                $data = DB::query('SELECT task, dueYear, dueMonth, dueDay FROM task_details WHERE task = :task', array(':task'=>$linkedTo));
+                
+                foreach($data as $data){
+                $due = $data['dueYear'].'0'.$data['dueMonth'].$data['dueDay'];
+                }
+                
+                if($due2 < $due){
+                    echo 'Cannot add a subtask with a due date later than the main task you linked it to';
+                }
+                
+                else {
+                    DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo, :dueMonth, :dueYear, :dueDay)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo, ':dueMonth'=>$dueMonth, ':dueYear'=>$dueYear, ':dueDay'=>$dueDay));
+                    echo 'Success';
+                }
+            }
+            
+            else {
+                DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo, :dueMonth, :dueYear, :dueDay)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo, ':dueMonth'=>$dueMonth, ':dueYear'=>$dueYear, ':dueDay'=>$dueDay));
+                    echo 'Success';
+            }
             
         }
            
         else{
+            
+            if(DB::query('SELECT task FROM task_details WHERE task = :task AND status = :status', array(':task'=> $particularsVal, ':status'=>$status))){
+                DB::query('UPDATE task_details SET status = :status, linkedTo = :linkedTo, dueMonth = :dueMonth, dueYear = :dueYear, dueDay = :dueDay, deptID =:deptID, taskType = :taskType WHERE task = :task', array(':status'=>0, ':task'=>$particularsVal, ':linkedTo'=>$linkedTo, ':dueMonth'=>$dueMonth, ':dueYear'=> $dueYear, ':dueDay'=>$dueDay, ':deptID'=>$deptID, ':taskType'=>$taskType));
+                echo 'Success';
+            }
+            
+            else{
+            
             $err = 'That particular already exists';
             array_push($errors, $err);
             echo 'That particular already exists';
             return $errors;
             }
+        }
     }
     
-     public static function editParticularsVal($particularsOldVal, $particularsNewVal){
+     public static function editParticularsVal($particularsOldVal, $particularsNewVal, $dueMonth, $dueYear, $dueDay){
+         
+         $dueMonthS = '';
+         $dueYearS = '';
+         $dueDayS = '';
         
         if(DB::query('SELECT task FROM task_details WHERE task = :task', array(':task'=> $particularsOldVal))){
             
             if(!DB::query('SELECT task FROM task_details WHERE task = :task', array(':task'=> $particularsNewVal))){
+                
+                if(empty($dueMonth)){
+                    $dueMonthS = DB::query('SELECT dueMonth FROM task_details WHERE task =:task', array(':task'=>$particularsOldVal))[0]['dueMonth'];
+                }
+                else{
+                    $dueMonthS = $dueMonth;
+                }
+                
+                if(empty($dueYear)){
+                    $dueYearS = DB::query('SELECT dueYear FROM task_details WHERE task =:task', array(':task'=>$particularsOldVal))[0]['dueYear'];
+                }
+                else{
+                    $dueYearS = $dueYear;
+                }
+                
+                if($dueDay == 0){
+                    $dueDayS = DB::query('SELECT dueDay FROM task_details WHERE task =:task', array(':task'=>$particularsOldVal))[0]['dueDay'];
+                }
+                else{
+                    $dueDayS = $dueDay;
+                }
             
-        DB::query('UPDATE task_details SET task = :taskNew WHERE task = :taskOld', array(':taskNew'=> $particularsNewVal, ':taskOld'=> $particularsOldVal));
+        DB::query('UPDATE task_details SET task = :taskNew, dueMonth = :dueMonth, dueYear = :dueYear, dueDay = :dueDay WHERE task = :taskOld', array(':taskNew'=> $particularsNewVal, ':taskOld'=> $particularsOldVal, ':dueMonth'=>$dueMonthS, ':dueYear'=>$dueYearS, ':dueDay'=>$dueDayS));
+        
+        DB::query('UPDATE task_details SET linkedTo = :linkedTo WHERE linkedTo = :task', array(':linkedTo'=>$particularsNewVal, ':task'=>$particularsOldVal));        
         echo 'Success';
             
             }
@@ -217,12 +276,14 @@ class ParticularsAdmin{
             $taskType = 1;
             $notLinked = 0;
             $empty = '';
+            $class = '';
+            $status = 0;
 
-            $mainTasks  = DB::query('SELECT id ,task, dueMonth, dueDay, dueYear FROM task_details WHERE taskType = :taskType ORDER BY id ASC LIMIT 5', array(':taskType'=>$taskType));
+            $mainTasks  = DB::query('SELECT id ,task, dueMonth, dueDay, dueYear FROM task_details WHERE taskType = :taskType AND status = :status ORDER BY id ASC LIMIT 5', array(':taskType'=>$taskType, ':status'=>0));
             
             foreach($mainTasks as $main){
                 
-                $subTasks = DB::query('SELECT * FROM task_details WHERE linkedTo != :notLinkedTo AND linkedTo != :empty AND linkedTo = :linkedToName', array(':notLinkedTo'=>$notLinked, ':empty'=>$empty, ':linkedToName'=>$main['task']));
+                $subTasks = DB::query('SELECT * FROM task_details WHERE linkedTo != :notLinkedTo AND linkedTo != :empty AND linkedTo = :linkedToName AND status = :status', array(':notLinkedTo'=>$notLinked, ':empty'=>$empty, ':linkedToName'=>$main['task'], ':status'=>$status));
                 
                 $dateTime1 = strtotime($main['dueMonth']);
                 $dateTime2 = date("m");
@@ -286,14 +347,37 @@ class ParticularsAdmin{
                 $dayComp = $main['dueDay'] - date('d'); 
                 $monthComp = $main['dueMonth'] - date('m');
                 $yearComp = $main['dueYear'] - date('Y');
+                $dueDate = '';
                 
+                 if($dueMonth < 10){
                 $dueDate = $main['dueYear'].'0'.$dueMonth.$main['dueDay'];
+            }
+            
+            else{
+                
+                $dueDate = $main['dueYear'].$dueMonth.$main['dueDay'];
+                }
+                
                 $today = date('Ymd');
+                
+                $dueComp = $dueDate - $today;
+                
+                if($dueComp > 30){
+                    $class = 'alert-success';
+                }
+                
+                else if($dueComp <= 30 && $dueComp > 7){
+                    $class = 'alert-warning';
+                }
+                
+                if($dueComp <= 7){
+                    $class = 'flashit alert-danger';
+                }
 
                 if($dueDate > $today){
                       echo '
                             <div class="carousel-item col-sm-10">
-                            <div class="card">
+                            <div class="card '.$class.'">
                               <div class="card-body">
                                 <h4 class="card-title">'.$main['task'].'</h4><small class="text-muted">Parent task and all subtasks due by: '.$main['dueDay'].' '.$dueMonthString.'</small><hr>
                                 ';
@@ -303,22 +387,7 @@ class ParticularsAdmin{
                           <p class="card-text">'.$task['task'].'.</p>
                           <p class="card-text"><small class="text-muted">Task is due: '.$task['dueDay'].' '.$task['dueMonth'].' '.$task['dueYear'].'</small></p>
                           
-                          <div class="container mb-3">
-                            <section id="timer">
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 countdown-wrapper">
-                                        <div class="well">
-                                            <div id="countdown">
-                                                <span id="months" class="timer bg-success">'.$monthComp.'</span>
-                                                <span id="days" class="timer bg-warning">'.$dayComp.'</span>
-                                                <span id="years" class="timer bg-info">'.$yearComp.'</span>
-                                                <span id="mins" class="timer bg-primary"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                          </div>
+        
                     ';
                 }
                 

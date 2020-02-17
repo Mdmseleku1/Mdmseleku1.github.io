@@ -13,6 +13,28 @@ if(Login::isLoggedIn()){
 
 
 if(isset($_POST['register'])){
+    
+     $url = "https://www.google.com/recaptcha/api/siteverify";
+    $data = [
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
+			'response' => $_POST['token'],
+			'remoteip' => $_SERVER['REMOTE_ADDR']
+		];
+
+		$options = array(
+		    'http' => array(
+		      'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		      'method'  => 'POST',
+		      'content' => http_build_query($data)
+		    )
+		  );
+
+		$context  = stream_context_create($options);
+  		$response = file_get_contents($url, false, $context);
+
+		$res = json_decode($response, true);
+		if($res['success'] == true) {
+    
             
     $empID = $_POST['empID'];
     $password = $_POST['password'];
@@ -23,8 +45,12 @@ if(isset($_POST['register'])){
     $lastName = $_POST['lastName'];
     $phoneNum = $_POST['phoneNum'];
     $secretAns = $_POST['secretAns'];
-    $deptID = 1;
+    $deptID = $_POST['deptID'];    
     $isAdmin = 0;
+            
+        if($deptID == 0000){
+                $isAdmin = 1;
+        }
   
     if(!DB::query('SELECT empID FROM users WHERE empID=:empID', array(':empID'=>$empID))){
         if(!DB::query('SELECT email FROM users WHERE email=:email', array(':email'=>$email))){
@@ -92,6 +118,7 @@ if(isset($_POST['register'])){
         $err =  "This user already exists in our records";
         array_push($errors, $err);
     }
+    }
 }
 ?>
 
@@ -110,6 +137,7 @@ if(isset($_POST['register'])){
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg"></script>
 </head>
 
 <body class="bg-gradient-primary">
@@ -118,28 +146,40 @@ if(isset($_POST['register'])){
             <div class="card-body p-0">
                 <div class="row">
                     <div class="col-lg-5 d-none d-lg-flex">
-                        <div class="flex-grow-1 bg-register-image" style="background-image: url(&quot;assets/img/zensar.jpg&quot;);"></div>
+                        <div class="flex-grow-1 bg-register-image" style="background-image: url(&quot;assets/img/zensar.jpg&quot;);background-position: center;background-size: contain;background-repeat: no-repeat;"></div>
                     </div>
                     <div class="col-lg-7">
                         <div class="p-5">
                             <div class="text-center">
                                 <h4 class="text-dark mb-4">Create an Account!</h4>
                             </div>
+                            
+                            <?php if(count($errors) > 0){
+                                            foreach($errors as $error){
+                                            echo "<div><p class='text-danger'>".$error."</p></div>";
+                                        }
+                                        }?>
+                            
                             <form class="user" method="post" action="register.php">
+                                 <input type="hidden" id="token" name="token">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="firstName" placeholder="First Name" name="firstName"></div>
                                     <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="lastName" placeholder="Last Name" name="lastName" required></div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="empID" placeholder="Employee ID" name="empID" required></div>
-                                    <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="secretAns" placeholder="Secret" name="secretAns" required></div>
+                                    <div class="col-sm-6"><input class="form-control form-control-user" type="text" id="secretAns" placeholder="Secret Word / Phrase" name="secretAns" required></div>
                                 </div>
                                 <div class="form-group"><input class="form-control form-control-user" type="email" id="email" aria-describedby="emailHelp" placeholder="Email Address" name="email" required></div>
                                 <div class="form-group"><input class="form-control form-control-user" type="text" id="phoneNum" aria-describedby="emailHelp" placeholder="Phone Number" name="phoneNum" required></div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="password" id="password" placeholder="Password" name="password" required></div>
                                     <div class="col-sm-6"><input class="form-control form-control-user" type="password" id="password_repeat" placeholder="Repeat Password" name="password_repeat" required></div>
-                                </div><button class="btn btn-primary btn-block text-white btn-user" type="submit" id="register" name="register">Register Account</button>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0"><input class="form-control form-control-user" type="text" id="deptID" placeholder="Department ID" name="deptID" required></div>
+                                </div>
+                                <button class="btn btn-primary btn-block text-white btn-user" type="submit" id="register" name="register">Register Account</button>
                                 <hr>
                             </form>
                             <div class="text-center"><a class="small" href="login.php">Already have an account? Login!</a></div>
@@ -156,6 +196,14 @@ if(isset($_POST['register'])){
     <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
     <script src="assets/js/script.min.js"></script>
+    <script>
+          grecaptcha.ready(function() {
+              grecaptcha.execute('6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg', {action: 'homepage'}).then(function(token) {
+                 // console.log(token);
+                 document.getElementById("token").value = token;
+              });
+          });
+    </script>
 </body>
 
 </html>
