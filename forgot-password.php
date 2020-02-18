@@ -8,7 +8,7 @@ if (isset($_POST['resetpassword'])) {
     
         $url = "https://www.google.com/recaptcha/api/siteverify";
         $data = [
-			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
+			'secret' => "your_secret_key",
 			'response' => $_POST['token'],
 			'remoteip' => $_SERVER['REMOTE_ADDR']
 		];
@@ -79,7 +79,7 @@ if(Login::isLoggedIn()){
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
-    <script src="https://www.google.com/recaptcha/api.js?render=6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=your_site_key"></script>
 </head>
 
 <body class="bg-gradient-primary" style="background-color: #092c6e;background-image: url(&quot;none&quot;);">
@@ -128,7 +128,7 @@ if(Login::isLoggedIn()){
     <script src="assets/js/script.min.js"></script>
      <script>
           grecaptcha.ready(function() {
-              grecaptcha.execute('6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg', {action: 'homepage'}).then(function(token) {
+              grecaptcha.execute('your_site_key', {action: 'homepage'}).then(function(token) {
                  // console.log(token);
                  document.getElementById("token").value = token;
               });
