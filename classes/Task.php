@@ -42,7 +42,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             
             if($dueDate > $today){
             
@@ -85,7 +98,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             
             if($dueDate > $today){
             
@@ -129,7 +155,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             
             if($dueDate > $today){
             
@@ -169,10 +208,23 @@ class Task{
         $upcomingTasks = DB::query('SELECT task, dueMonth, dueYear, dueDay FROM task_details WHERE dueMonth = :dueIn AND status = :status ORDER BY id DESC;', array(':dueIn'=> $dueIn1, ':status'=>0));
         
         foreach($upcomingTasks as $due){
-            $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+           $dueMonth = $due['dueMonth'];
             
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             if($dueDate > $today){
             
             echo '
@@ -215,7 +267,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             
             if($dueDate > $today){
             
@@ -258,7 +323,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             
             if($dueDate > $today){
             
@@ -304,7 +382,13 @@ class Task{
             $dueMonth = $due['dueMonth'];
             
             if($dueMonth < 10){
-                $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
             }
             
             else{
@@ -354,7 +438,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             
             if($dueDate > $today){
             
@@ -398,7 +495,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             
             if($dueDate > $today){
             
@@ -442,8 +552,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
             
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             if($dueDate > $today){
             
             
@@ -486,7 +608,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             
             if($dueDate > $today){
             
@@ -530,7 +665,20 @@ class Task{
             
             $dueMonth = $due['dueMonth'];
             
-            $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+            if($dueMonth < 10){
+              if($due['dueDay'] < 10){
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.'0'.$due['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $due['dueYear'].'0'.$dueMonth.$due['dueDay'];
+                     }
+            }
+            
+            else{
+                
+                $dueDate = $due['dueYear'].$dueMonth.$due['dueDay'];
+            }
             
             if($dueDate > $today){
             

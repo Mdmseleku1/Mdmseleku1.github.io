@@ -40,6 +40,20 @@
               if($status == 1){
                   DB::query('UPDATE notifications SET status = 1 WHERE id=:id', array(':id'=>$noteID));
               }
+                  
+            $status2 = 0;
+            if(!DB::query('SELECT subject FROM notifications WHERE status = :status', array(':status'=>$status2))){
+                echo '<script>
+                
+                window.onload = function() {
+                    if(!window.location.hash) {
+                        window.location = window.location + "#loaded";
+                        window.location.reload();
+                    }
+                }
+                
+                </script>';
+            }
             
             }
         }

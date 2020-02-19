@@ -10,7 +10,7 @@ if (isset($_POST['confirm'])) {
     
      $url = "https://www.google.com/recaptcha/api/siteverify";
     $data = [
-			'secret' => "your_secret_key",
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
 			'response' => $_POST['token'],
 			'remoteip' => $_SERVER['REMOTE_ADDR']
 		];
@@ -50,7 +50,7 @@ if (isset($_POST['confirm'])) {
 ?>
 <html>
 <head>
-<script src="https://www.google.com/recaptcha/api.js?render=your_site_key"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg"></script>
 </head>
 <body>
 <h1>Logout of your Account?</h1>
@@ -62,7 +62,7 @@ if (isset($_POST['confirm'])) {
 </form>
 <script>
           grecaptcha.ready(function() {
-              grecaptcha.execute('your_site_key', {action: 'homepage'}).then(function(token) {
+              grecaptcha.execute('6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg', {action: 'homepage'}).then(function(token) {
                  // console.log(token);
                  document.getElementById("token").value = token;
               });

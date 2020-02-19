@@ -438,6 +438,7 @@ if(isset($_POST['submitNewAdmin'])){
                                         Notify::checkStatus();
                                         ?>
                                         
+                                        
                                   <a class="text-center dropdown-item small text-gray-500" href="notifications.php">Show All Alerts</a></div>
                                 </li>
                             </li>

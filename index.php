@@ -20,7 +20,7 @@ if(isset($_POST['submit'])){
     
     $url = "https://www.google.com/recaptcha/api/siteverify";
     $data = [
-			'secret' => "your_secret_key",
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
 			'response' => $_POST['token'],
 			'remoteip' => $_SERVER['REMOTE_ADDR']
 		];
@@ -135,7 +135,7 @@ if(isset($_POST['submit'])){
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <script src="https://www.google.com/recaptcha/api.js?render="your_site_key"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg"></script>
         
     <!-- SELECT CSS TO IMPLEMENT SEARCH WITH OPTIONS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
@@ -211,7 +211,6 @@ if(isset($_POST['submit'])){
                                         Notify::getNotifications();
                                         Notify::checkStatus();
                                         ?>
-                                        
                                         
                                         <div><a class="text-center dropdown-item small text-gray-500" href="notifications.php">Show All Alerts</a>
                                         </div>
@@ -475,70 +474,70 @@ if(isset($_POST['submit'])){
             let tasks = document.getElementById("taskGroup").selectedIndex;
             let indTask = document.getElementsByTagName("option")[tasks].value;
             
-            let monthlyTasksDiv = document.querySelector("#monthlyTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
+            let monthlyTasksDiv = document.querySelector("monthlyTasks");
+            let listedTasks = monthlyTasksDiv.querySelectorAll("P");
             let noMonthlyTasks = document.getElementById("noMonthlyTasks");
             let rule = monthlyTasksDiv.querySelector("hr");
            
-            let monthlyTasksDiv = document.querySelector("#janTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
-            let noMonthlyTasks = document.getElementById("noJanTasks");
-            let rule = monthlyTasksDiv.querySelector("hr");
+            let janTaskGroup = document.querySelector("janTasks");
+            let janTasks = janTaskGroup.querySelectorAll("P");
+            let noJanTasks = document.getElementById("noJanTasks");
+            let janRule = janTaskGroup.querySelector("hr");
            
-            let monthlyTasksDiv = document.querySelector("#febTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
-            let noMonthlyTasks = document.getElementById("noFebTasks");
-            let rule = monthlyTasksDiv.querySelector("hr");
+            let febTaskGroup = document.querySelector("febTasks");
+            let febTasks = febTaskGroup.querySelectorAll("P");
+            let noFebTasks = document.getElementById("noFebTasks");
+            let febRule =febTaskGroup.querySelector("hr");
            
-           let monthlyTasksDiv = document.querySelector("#marTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
-            let noMonthlyTasks = document.getElementById("noMarTasks");
-            let rule = monthlyTasksDiv.querySelector("hr");
+            let marTaskGroup = document.querySelector("marTasks");
+            let marTasks = marTaskGroup.querySelectorAll("P");
+            let noMarTasks = document.getElementById("noMarTasks");
+            let marRule = marTaskGroup.querySelector("hr");
            
-           let monthlyTasksDiv = document.querySelector("#aprTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
-            let noMonthlyTasks = document.getElementById("noAprTasks");
-            let rule = monthlyTasksDiv.querySelector("hr");
+            let aprTaskGroup = document.querySelector("aprTasks");
+            let aprTasks = aprTaskGroup.querySelectorAll("P");
+            let noAprTasks = document.getElementById("noAprTasks");
+            let aprRule = marTaskGroup.querySelector("hr");
             
             let mayTaskGroup = document.getElementById("mayTasks");
-            let mayTasks = mayTaskGroup.getElementsByTagName("p");
+            let mayTasks = mayTaskGroup.getElementsByTagName("P");
             let noMayTasks = document.getElementById("noMayTasks");
             let mayRule =  mayTaskGroup.querySelector("hr");
             
             let juneTaskGroup = document.getElementById("juneTasks");
-            let juneTasks = juneTaskGroup.getElementsByTagName("p");
+            let juneTasks = juneTaskGroup.getElementsByTagName("P");
             let noJuneTasks = document.getElementById("noJuneTasks");
             let juneRule = juneTaskGroup.querySelector("hr");
 
             let  julyTaskGroup = document.getElementById("julyTasks");
-            let julyTasks = julyTaskGroup.getElementsByTagName("p");
+            let julyTasks = julyTaskGroup.getElementsByTagName("P");
             let noJulyTasks = document.getElementById("noJulyTasks");
             let julyRule = julyTaskGroup.querySelector("hr");
            
-           let monthlyTasksDiv = document.querySelector("#augTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
-            let noMonthlyTasks = document.getElementById("noAugTasks");
-            let rule = monthlyTasksDiv.querySelector("hr");
+            let augTaskGroup = document.querySelector("augTasks");
+            let augTasks = augTaskGroup.querySelectorAll("P");
+            let noAugTasks = document.getElementById("noAugTasks");
+            let augRule = augTaskGroup.querySelector("hr");
            
-           let monthlyTasksDiv = document.querySelector("#septTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
-            let noMonthlyTasks = document.getElementById("noSeptTasks");
-            let rule = monthlyTasksDiv.querySelector("hr");
+            let septTaskGroup = document.querySelector("septTasks");
+            let septTasks = septTaskGroup.querySelectorAll("P");
+            let noSeptTasks = document.getElementById("noSeptTasks");
+            let septRule = septTaskGroup.querySelector("hr");
            
-           let monthlyTasksDiv = document.querySelector("#octTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
-            let noMonthlyTasks = document.getElementById("noOctTasks");
-            let rule = monthlyTasksDiv.querySelector("hr");
+            let octTaskGroup = document.querySelector("octTasks");
+            let octTasks = octTaskGroup.querySelectorAll("P");
+            let noOctTasks = document.getElementById("noOctTasks");
+            let octRule = octTaskGroup.querySelector("hr");
            
-           let monthlyTasksDiv = document.querySelector("#novTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
-            let noMonthlyTasks = document.getElementById("noNovTasks");
-            let rule = monthlyTasksDiv.querySelector("hr");
+            let novTaskGroup = document.querySelector("novTasks");
+            let NovTasks = novTaskGroup.querySelectorAll("P");
+            let noNovTasks = document.getElementById("noNovTasks");
+            let novRule = novTaskGroup.querySelector("hr");
            
-           let monthlyTasksDiv = document.querySelector("#decTasks");
-            let listedTasks = monthlyTasksDiv.querySelectorAll("p");
-            let noMonthlyTasks = document.getElementById("noDecTasks");
-            let rule = monthlyTasksDiv.querySelector("hr");
+            let decTaskGroup = document.querySelector("decTasks");
+            let decTasks = decTaskGroup.querySelectorAll("P");
+            let noDecTasks = document.getElementById("noDecTasks");
+            let decRule = decTaskGroup.querySelector("hr");
 
             let allTasks = [listedTasks, janTasks, febTasks, marTasks, aprTasks, mayTasks, juneTasks, julyTasks, augTasks, septTasks, octTaks, novTasks, decTasks];
             let noTasks = [noMonthlyTasks, noJanTasks, noFebTasks, noMarTasks, noAprTasks, noMayTasks, noJuneTasks, noJulyTasks, noAugTasks, noSeptTasks, noOctTasks, noNovTasks, noDecTasks];
@@ -684,7 +683,7 @@ function toggle_visibility() {
 </script>
 <script>
           grecaptcha.ready(function() {
-              grecaptcha.execute('your_site_key', {action: 'homepage'}).then(function(token) {
+              grecaptcha.execute('6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg', {action: 'homepage'}).then(function(token) {
                  // console.log(token);
                  document.getElementById("token").value = token;
               });

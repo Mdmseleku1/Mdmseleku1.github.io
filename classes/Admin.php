@@ -170,17 +170,20 @@ class ParticularsAdmin{
                 }
                 
                 if($due2 < $due){
-                    echo 'Cannot add a subtask with a due date later than the main task you linked it to';
+                    
+                    $err = 'Cannot add a subtask with a due date later than the main task you linked it to';
+                    array_push($errors, $err);
+                    return $errors;
                 }
                 
                 else {
-                    DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo, :dueMonth, :dueYear, :dueDay)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo, ':dueMonth'=>$dueMonth, ':dueYear'=>$dueYear, ':dueDay'=>$dueDay));
+                    DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo, :dueMonth, :dueYear, :dueDay, :status)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo, ':dueMonth'=>$dueMonth, ':dueYear'=>$dueYear, ':dueDay'=>$dueDay, ':status'=>0));
                     echo 'Success';
                 }
             }
             
             else {
-                DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo, :dueMonth, :dueYear, :dueDay)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo, ':dueMonth'=>$dueMonth, ':dueYear'=>$dueYear, ':dueDay'=>$dueDay));
+                DB::query('INSERT INTO task_details VALUES(:id, :task, :deptID, :taskType, :linkedTo, :dueMonth, :dueYear, :dueDay, :status)', array(':id'=> $id, ':task'=> $particularsVal, ':deptID'=>$deptID, ':taskType'=>$taskType, ':linkedTo'=> $linkedTo, ':dueMonth'=>$dueMonth, ':dueYear'=>$dueYear, ':dueDay'=>$dueDay, ':status'=>0));
                     echo 'Success';
             }
             
@@ -208,6 +211,7 @@ class ParticularsAdmin{
          $dueMonthS = '';
          $dueYearS = '';
          $dueDayS = '';
+         $errors = array();
         
         if(DB::query('SELECT task FROM task_details WHERE task = :task', array(':task'=> $particularsOldVal))){
             
@@ -242,12 +246,19 @@ class ParticularsAdmin{
             }
             
             else{
-                echo 'Cannot make that edit because particular already exists';
+                $err = 'Cannot make that edit because particular already exists';
+                array_push($errors, $err);
+                foreach($errors as $error){
+                echo '<div><p class="text-danger">'.$error.'</p></div>';
+                }
+                return $errors;
             }
         }
     }
     
         public static function delParticularsVal($particularsValDel){
+            
+            $errors = array();
         
         if(DB::query('SELECT task FROM task_details WHERE task = :task', array(':task'=> $particularsValDel))){
             
@@ -259,14 +270,26 @@ class ParticularsAdmin{
                 }
             
             else{
-                echo 'Cannot delete task because it is a main task that has dependant tasks';
+                
+                $err = 'Cannot delete task because it is a main task that has dependant tasks';
+                array_push($errors, $err);
+                foreach($errors as $error){
+                echo '<div><p class="text-danger">'.$error.'</p></div>';
+                }
+                return $errors;
             }
 
             }
             
                         
             else{
-                echo 'Cannot delete that task because it does not exist';
+                
+                $err = 'Cannot delete that task because it does not exist';
+                array_push($errors, $err);
+                foreach($errors as $error){
+                echo '<div><p class="text-danger">'.$error.'</p></div>';
+                }
+                return $errors;
             }
         }
     
@@ -339,7 +362,7 @@ class ParticularsAdmin{
             break;
         }
         case '12':{
-            $dueMonth = 'December';
+            $dueMonthString = 'December';
             break;
             }
     }
@@ -350,12 +373,20 @@ class ParticularsAdmin{
                 $dueDate = '';
                 
                  if($dueMonth < 10){
-                $dueDate = $main['dueYear'].'0'.$dueMonth.$main['dueDay'];
-            }
+                     if($main['dueDay'] < 10){
+                        $dueDate = $main['dueYear'].'0'.$dueMonth.'0'.$main['dueDay'];
+                     }
+                     
+                     else{
+                        $dueDate = $main['dueYear'].'0'.$dueMonth.$main['dueDay'];
+                     }
+                     
+                    }
             
             else{
                 
                 $dueDate = $main['dueYear'].$dueMonth.$main['dueDay'];
+                
                 }
                 
                 $today = date('Ymd');

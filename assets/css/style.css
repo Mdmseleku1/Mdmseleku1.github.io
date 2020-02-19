@@ -1,8 +1,8 @@
 /* Flash class and keyframe animation */
 .flashit{
   color:black;
-	-webkit-animation: flash linear 3.5s;
-	animation: flash linear 3.5s infinite;
+	-webkit-animation: flash linear 2.5s;
+	animation: flash linear 2.5s infinite;
 }
 
 @-webkit-keyframes flash {

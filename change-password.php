@@ -12,7 +12,7 @@ if (Login::isLoggedIn()) {
             
     $url = "https://www.google.com/recaptcha/api/siteverify";
     $data = [
-			'secret' => "your_secret_key",
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
 			'response' => $_POST['token'],
 			'remoteip' => $_SERVER['REMOTE_ADDR']
 		];
@@ -48,13 +48,23 @@ if (Login::isLoggedIn()) {
                                     
                                     header('Location: login.php');
                                 }
-
-                        } else {
-                                echo 'Passwords don\'t match!';
+                            
+                            else{
+                                $err = "Invalid password. Doesn't match minimum character length of 6 or exceeds maximum character length of 60.";
+                                 array_push($errors, $err);
+                            }
+                        } 
+                    
+                    else {
+                            
+                                $err = 'Passwords don\'t match!';
+                                array_push($errors, $err);
                         }
 
                 } else {
-                        echo 'Incorrect old password!';
+                        $err = 'Incorrect old password!';
+                        array_push($errors, $err);
+                    
                 }
 
             }
@@ -71,7 +81,7 @@ if (Login::isLoggedIn()) {
                     
     $url = "https://www.google.com/recaptcha/api/siteverify";
     $data = [
-			'secret' => "your_secret_key",
+			'secret' => "6LexmdkUAAAAAFdVXetRc1WiS5D5RIODM8cVkrXS",
 			'response' => $_POST['token'],
 			'remoteip' => $_SERVER['REMOTE_ADDR']
 		];
@@ -107,8 +117,14 @@ if (Login::isLoggedIn()) {
                                         }
 
                                 } else {
-                                        echo 'Passwords don\'t match!';
+                                    $err = 'Passwords don\'t match!';
+                                    array_push($errors, $err);
                                 }
+                    }
+                    
+                    else {
+                        $err = 'ReCaptcha Verification failed';
+                        array_push($errors, $err);
                     }
                 }
 
@@ -140,7 +156,7 @@ if (Login::isLoggedIn()) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
-    <script src="https://www.google.com/recaptcha/api.js?render=your_site_key"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg"></script>
 </head>
 
 <body class="bg-gradient-primary" style="background-color: #092c6e;background-image: url(&quot;none&quot;);">
@@ -192,7 +208,7 @@ if (Login::isLoggedIn()) {
     <script src="assets/js/script.min.js"></script>
     <script>
           grecaptcha.ready(function() {
-              grecaptcha.execute('your_secret_key', {action: 'homepage'}).then(function(token) {
+              grecaptcha.execute('6LexmdkUAAAAAMRZ8X2k7cFIt7MiUA1zqEPYiVmg', {action: 'homepage'}).then(function(token) {
                  // console.log(token);
                  document.getElementById("token").value = token;
               });
